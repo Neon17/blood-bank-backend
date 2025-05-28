@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -23,7 +24,7 @@ class AuthController extends Controller
             ], 404);
         }
 
-        if ($user->password === $request->password) {
+        if (Hash::check($request->password, $user->password)) {
             $token = $user->createToken('api-token')->plainTextToken;
             return response()->json([
                 'status' => 'success',
@@ -35,7 +36,8 @@ class AuthController extends Controller
 
         return response()->json([
             'status' => 'error',
-            'message' => 'Invalid credentials'
+            'message' => 'Invalid credentials',
+            'password match' => ($user->password === $request->password)
         ]);
     }
 

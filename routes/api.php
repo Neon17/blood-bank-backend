@@ -16,11 +16,20 @@ Route::get('/test', [UserController::class, 'test']);
 // now do user signup and create token
 // create route to regenerate sanctum token
 
+Route::get('/signin', function() {
+    return response()->json([
+        'status' => 'Authenticated Required',
+        'message' => 'Please login or signup to view this route'
+    ], 403);
+})->name('login');
 Route::post('/signin', [AuthController::class, 'signin']);
 Route::post('/signup', [AuthController::class, 'signup']);
 Route::post('/logout', [AuthController::class, 'login']);
 
 Route::get('/blood/requests', [BloodRequestController::class, 'index']);
+Route::post('/blood/requests', [BloodRequestController::class, 'store'])->middleware('auth:sanctum');
+Route::get('/blood/requests/{id}', [BloodRequestController::class, 'show']);
+Route::delete('/blood/requests/{id}', [BloodRequestController::class, 'delete'])->middleware('auth:sanctum');
 
 Route::get('/users', [UserController::class, 'index']);
 

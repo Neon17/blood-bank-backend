@@ -14,18 +14,24 @@ return new class extends Migration
     public function up(): void
     {
         //User should fill form on accepting blood request
-        //
         Schema::create('blood_requests', function (Blueprint $table) {
             $table->id();
             $table->string('blood_type');
             $table->string('quantity');
             $table->date('date_time'); // date_time means date and time blood is required
-            $table->string('location'); // latitude and longitude
+            $table->string('exact_location'); // hospital name or some healthcare center name
             $table->string('contact_number');
+
+            // Location-based features (user can pick from map)
+            $table->decimal('latitude', 10, 8)->nullable();
+            $table->decimal('longitude', 11, 8)->nullable();
+            $table->string('city', 100)->nullable();
+            $table->string('state', 100)->nullable();
+            $table->string('country', 100)->default('Nepal');
 
             // receiver can be user or blood bank (as per necessity)
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete()->nullable(); // receiver
-            $table->foreignId('blood_bank_id')->constrained('blood_banks')->cascadeOnDelete()->nullable(); // receiver
+            // $table->foreignId('blood_bank_id')->constrained('blood_banks')->cascadeOnDelete()->nullable(); // receiver
             $table->string('status')->default('pending'); // It can be completed, donated or pending
 
             $table->string('donated_by')->nullable();
