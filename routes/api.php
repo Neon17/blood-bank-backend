@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BloodRequestController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,7 +18,9 @@ Route::get('/test', [UserController::class, 'test']);
 
 Route::post('/signin', [AuthController::class, 'signin']);
 Route::post('/signup', [AuthController::class, 'signup']);
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'login']);
+
+Route::get('/blood/requests', [BloodRequestController::class, 'index']);
 
 Route::get('/users', [UserController::class, 'index']);
 

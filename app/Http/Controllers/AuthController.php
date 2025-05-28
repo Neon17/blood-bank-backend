@@ -10,7 +10,33 @@ class AuthController extends Controller
     //
     public function signin(Request $request)
     {
-        return 'signin';
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+        if (!$user) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'User not found'
+            ], 404);
+        }
+
+        if ($user->password === $request->password) {
+            $token = $user->createToken('api-token')->plainTextToken;
+            return response()->json([
+                'status' => 'success',
+                'message' => 'User logged in successfully',
+                'token' => $token,
+                'user' => $user
+            ], 200);
+        }
+
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Invalid credentials'
+        ]);
     }
 
     public function signup(Request $request)
@@ -18,7 +44,7 @@ class AuthController extends Controller
         $request->validate([
             'name' => 'required',
             'email' => 'required|email|unique:users',
-            'password' => 'required',
+            'password' => 'required|min:8',
             'confirmPassword' => 'required|same:password'
         ]);
         $user = User::create([
@@ -43,8 +69,12 @@ class AuthController extends Controller
         ], 400);
     }
 
-    public function login(Request $request)
+    public function logout(Request $request)
     {
-        return 'login';
+        $request->user()->currentAccessToken()->delete();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'User logged out successfully'
+        ], 200);
     }
 }

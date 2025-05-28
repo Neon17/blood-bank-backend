@@ -13,4 +13,8 @@ class BloodBank extends Model
         'amount_of_blood',
         'phone_number'
     ];
+
+    public function bloodRequests() {
+        return $this->hasMany(BloodRequest::class);
+    }
 }

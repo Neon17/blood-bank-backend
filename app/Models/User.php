@@ -26,6 +26,10 @@ class User extends Authenticatable
         'password',
     ];
 
+    public function bloodRequests() {
+        return $this->hasMany(BloodRequest::class);
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *
