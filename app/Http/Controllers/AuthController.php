@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
@@ -11,7 +12,7 @@ class AuthController extends Controller
     //
     public function signin(Request $request)
     {
-        $request->validate([
+        $credentials = $request->validate([
             'email' => 'required|email',
             'password' => 'required',
         ]);
@@ -21,24 +22,23 @@ class AuthController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'User not found'
-            ], 404);
+            ], 401);
         }
 
-        if (Hash::check($request->password, $user->password)) {
+        if (Auth::attempt($credentials)) {
             $token = $user->createToken('api-token')->plainTextToken;
             return response()->json([
-                'status' => 'success',
-                'message' => 'User logged in successfully',
+                'user' => Auth::user(),
                 'token' => $token,
-                'user' => $user
-            ], 200);
+                'message' => 'Authenticated'
+            ]);
         }
 
         return response()->json([
             'status' => 'error',
             'message' => 'Invalid credentials',
             'password match' => ($user->password === $request->password)
-        ]);
+        ], 401);
     }
 
     public function signup(Request $request)

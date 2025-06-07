@@ -22,7 +22,7 @@ Route::get('/signin', function() {
         'message' => 'Please login or signup to view this route'
     ], 403);
 })->name('login');
-Route::post('/signin', [AuthController::class, 'signin']);
+Route::post('/login', [AuthController::class, 'signin']);
 Route::post('/signup', [AuthController::class, 'signup']);
 Route::post('/logout', [AuthController::class, 'login']);
 
