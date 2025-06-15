@@ -57,6 +57,33 @@ class BloodRequestController extends Controller
         ]);
     }
 
+    public function edit (BloodRequest $bloodRequest) 
+    {
+        return response()->json([
+            'status' => 'success',
+            'data' => $bloodRequest
+        ]);
+    }
+
+    public function update(Request $request, BloodRequest $bloodRequest)
+    {
+        $request->validate([
+            'blood_type' => 'required',
+            'quantity' => 'required',
+            'date_time' => 'required',
+            'exact_location' => 'required',
+            'contact_number' => 'required',
+            'city' => 'required',
+            'state' => 'required',
+        ]);
+
+        $bloodRequest->update($request->all());
+        return response()->json([
+            'status' => 'success',
+            'data' => $bloodRequest
+        ]);
+    }
+
     public function show($id)
     {
         // $id is Blood Request Id
@@ -67,7 +94,7 @@ class BloodRequestController extends Controller
         ]);
     }
 
-    public function delete($id)
+    public function destroy($id)
     {
         $bloodRequest = BloodRequest::find($id);
         if (!$bloodRequest) {

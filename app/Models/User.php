@@ -26,6 +26,10 @@ class User extends Authenticatable
         'password',
     ];
 
+    protected function scopeDonors($query) {
+        return $query->where('will_donate', true);
+    }
+
     public function bloodRequests() {
         return $this->hasMany(BloodRequest::class);
     }
