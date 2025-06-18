@@ -27,7 +27,7 @@ return new class extends Migration
             $table->decimal('latitude', 10, 7)->nullable();
             $table->decimal('longitude', 10, 7)->nullable();
 
-            $table->string('will_donate')->boolean(false); // user who willing to donate are termed as donor in our system 
+            $table->boolean('will_donate')->default(false); // user who willing to donate are termed as donor in our system 
             $table->boolean('verified_as_donor')->default(0); // donor verification is given by those whose blood screening and health check has been done or
             // who donated blood and it is verified by blood bank, or has been verified by a doctor, or by a hospital, or he/she uploaded original photo of checkup
             $table->date('last_donated')->nullable();
