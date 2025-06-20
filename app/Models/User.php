@@ -28,6 +28,7 @@ class User extends Authenticatable
         'password',
         'city',
         'country',
+        // latitude and longitude are for current location
         'current_city',
         'latitude',
         'longitude',

@@ -19,14 +19,11 @@ class UserController extends Controller
     public function updateMe(Request $request) {
         $user = User::find(Auth::id());
 
-        info("Current User is $user");
-
-        info($request);
-
         $request->validate([
             'name' => 'required',
             'email' => 'required',
         ]);
+        $location = json_decode($request->location);
 
         // write all editable fields
         $user->name = $request->name;
@@ -37,8 +34,11 @@ class UserController extends Controller
         $user->country = $request->country;
         $user->current_city = $request->current_city;
         $user->will_donate = $request->will_donate?? false;
+        
+        $user->latitude = $location->lat;
+        $user->longitude = $location->lng;
 
-        $user->save();
+        $user->update();
         return response()->json([
             'status' => 'success',
             'data' => $user
