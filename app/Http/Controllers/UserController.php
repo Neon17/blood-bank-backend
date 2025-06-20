@@ -16,6 +16,37 @@ class UserController extends Controller
         return $user;
     }
 
+    public function updateMe(Request $request) {
+        $user = User::find(Auth::id());
+
+        info("Current User is $user");
+
+        info($request);
+
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required',
+        ]);
+
+        // write all editable fields
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->address = $request->address;
+        $user->dob = $request->dob;
+        $user->city = $request->city;
+        $user->country = $request->country;
+        $user->current_city = $request->current_city;
+        $user->will_donate = $request->will_donate?? false;
+
+        $user->save();
+        return response()->json([
+            'status' => 'success',
+            'data' => $user
+        ], 200, [
+            'Content-Type' => 'text/json'
+        ]);
+    }
+
     public function donors()
     {
         $users = User::donors()->get();

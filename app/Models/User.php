@@ -21,9 +21,19 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'email_verified_at',
         'address',
+        'role',
         'dob',
         'password',
+        'city',
+        'country',
+        'current_city',
+        'latitude',
+        'longitude',
+        'will_donate',
+        'verified_as_donor',
+        'last_donated',
     ];
 
     protected function scopeDonors($query) {
@@ -55,6 +65,15 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'dob' => 'datetime',
+            'last_donated' => 'datetime',
+            'will_donate' => 'boolean',
+            'verified_as_donor' => 'boolean',
+            'latitude' => 'float',
+            'longitude' => 'float',
+            'role' => 'string',
+            'last_verified' => 'datetime',
+            'last_donated' => 'datetime',
+            'last_verified' => 'datetime',
         ];
     }
 }

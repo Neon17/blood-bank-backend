@@ -27,6 +27,7 @@ Route::post('/signup', [AuthController::class, 'signup']);
 Route::post('/logout', [AuthController::class, 'login']);
 Route::post('/makeMeDonor', [UserController::class, 'makeMeDonor'])->middleware('auth:sanctum');
 Route::post('/removeMeDonor', [UserController::class, 'removeMeDonor'])->middleware('auth:sanctum');
+Route::match(['put', 'post'],'/updateMe', [UserController::class, 'updateMe'])->middleware('auth:sanctum');
 
 // Route::resource('/blood/requests', BloodRequestController::class);
 Route::get('/blood/requests', [BloodRequestController::class, 'index']);
