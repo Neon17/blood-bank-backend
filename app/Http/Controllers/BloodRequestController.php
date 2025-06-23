@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\BloodRequest;
+use Faker\Core\Blood;
 use Illuminate\Http\Request;
 
 class BloodRequestController extends Controller
@@ -21,6 +22,7 @@ class BloodRequestController extends Controller
     public function store(Request $request)
     {
         // should we use attach($user_id) here?
+        // to store blood requests, you have to fillup the contact number details
 
         $user_id = $request->user()->id; // comes from Authorization Bearer Token in Sanctum
         if (!$user_id) {
@@ -51,6 +53,17 @@ class BloodRequestController extends Controller
         $bloodRequest->user_id = $user_id;
         $bloodRequest->save();
 
+        return response()->json([
+            'status' => 'success',
+            'data' => $bloodRequest
+        ]);
+    }
+
+    public function finish($id) {
+        // if blood request is fulfilled, it goes to this route
+        $bloodRequest = BloodRequest::find($id);
+        $bloodRequest->active_status = false;
+        $bloodRequest->update();
         return response()->json([
             'status' => 'success',
             'data' => $bloodRequest

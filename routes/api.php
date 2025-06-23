@@ -37,6 +37,7 @@ Route::get('/blood/requests/{id}/edit', [BloodRequestController::class, 'edit'])
 Route::patch('/blood/requests/{id}', [BloodRequestController::class, 'update'])->middleware('auth:sanctum');
 Route::delete('/blood/requests/{id}', [BloodRequestController::class, 'delete'])->middleware('auth:sanctum');
 Route::get('/donors', [UserController::class, 'donors']);
+Route::post('/blood/requests/{id}/finish', [BloodRequestController::class, 'finish'])->middleware('auth:sanctum');
 
 Route::get('/users', [UserController::class, 'index']);
 

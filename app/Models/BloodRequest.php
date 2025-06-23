@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class BloodRequest extends Model
@@ -18,11 +19,18 @@ class BloodRequest extends Model
         'user_id',
         'blood_bank_id',
         'status',
+        'active_status', //active_status means whether the request is active or is fulfilled
         'donated_by',
         'donated_by_user',
         'donated_by_blood_banks',
         'verified_by',
     ];
+
+    protected static function booted(){
+        static::addGlobalScope('active', function(Builder $builder){
+            $builder->where('active_status', true);
+        });
+    }
 
     public function user()
     {
