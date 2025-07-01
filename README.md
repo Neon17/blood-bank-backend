@@ -8,3 +8,12 @@
 
 
 ## Instead of Blood Donor, lets make it Blood Requests Website and App
+
+## Another Important Idea:
+    - Not Exposing Donor's Contact Number, (because anytime calling to donor may harm to privacy)
+    - Requests should have contact number and man who wants requests can hide their name,....
+    - Smart Notification is sent through mobile, email (if subscribed to email), or through web
+    - Notification is sent only to those user who are nearby
+    - If possible, Blood Requests privacy also can be maintained somehow or may be not
+    - Make blood requests like facebook like posts (comments, like, viewed, description of requests, anything he/she types)
+  

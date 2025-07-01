@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\BloodRequest;
 use Faker\Core\Blood;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class BloodRequestController extends Controller
 {
@@ -12,7 +13,25 @@ class BloodRequestController extends Controller
 
     public function index()
     {
-        $bloodRequest = BloodRequest::with('user', 'bloodBank')->get();
+        // I have to sort in the order of nearest requests based on logged in user
+        // If that users' location is null, then all requests are shown
+        // If request has no query parameter (radiusInKm), then all requests are shown
+
+        info("blood requests index hit");
+        if (Auth::check()){
+            $latitude = Auth::user()->latitude;
+            $longitude = Auth::user()->longitude;
+    
+            $radiusInKm = request('radiusInKm') ?? null;
+    
+            if ($radiusInKm)
+                $bloodRequest = BloodRequest::with('user', 'bloodBank')->nearby($latitude, $longitude, $radiusInKm)->get();
+            else 
+                $bloodRequest = BloodRequest::with('user', 'bloodBank')->get();
+        }
+        else 
+            $bloodRequest = BloodRequest::with('user', 'bloodBank')->get();
+
         return response()->json([
             'status' => 'success',
             'data' => $bloodRequest

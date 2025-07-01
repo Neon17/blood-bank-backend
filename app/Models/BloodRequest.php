@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Traits\NearbyScope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class BloodRequest extends Model
 {
     //
+    use NearbyScope;
+
     protected $table = 'blood_requests';
 
     protected $fillable = [

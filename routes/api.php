@@ -30,13 +30,13 @@ Route::post('/removeMeDonor', [UserController::class, 'removeMeDonor'])->middlew
 Route::match(['put', 'post'],'/updateMe', [UserController::class, 'updateMe'])->middleware('auth:sanctum');
 
 // Route::resource('/blood/requests', BloodRequestController::class);
-Route::get('/blood/requests', [BloodRequestController::class, 'index']);
+Route::get('/blood/requests', [BloodRequestController::class, 'index'])->middleware('optionalSanctum');
 Route::post('/blood/requests', [BloodRequestController::class, 'store'])->middleware('auth:sanctum');
 Route::get('/blood/requests/{id}', [BloodRequestController::class, 'show']);
 Route::get('/blood/requests/{id}/edit', [BloodRequestController::class, 'edit'])->middleware('auth:sanctum');
 Route::patch('/blood/requests/{id}', [BloodRequestController::class, 'update'])->middleware('auth:sanctum');
 Route::delete('/blood/requests/{id}', [BloodRequestController::class, 'delete'])->middleware('auth:sanctum');
-Route::get('/donors', [UserController::class, 'donors']);
+Route::get('/donors', [UserController::class, 'donors'])->middleware('optionalSanctum');
 Route::post('/blood/requests/{id}/finish', [BloodRequestController::class, 'finish'])->middleware('auth:sanctum');
 
 Route::get('/users', [UserController::class, 'index']);
