@@ -58,7 +58,7 @@ class BloodRequestController extends Controller
             'exact_location' => 'required',
             'contact_number' => 'required',
             'city' => 'required',
-            'state' => 'required',
+            'country' => 'required',
         ]);
 
         $bloodRequest = new BloodRequest();
@@ -97,8 +97,9 @@ class BloodRequestController extends Controller
         ]);
     }
 
-    public function update(Request $request, BloodRequest $bloodRequest)
+    public function update(Request $request, $id)
     {
+        $bloodRequest = BloodRequest::find($id);
         $request->validate([
             'blood_type' => 'required',
             'quantity' => 'required',
@@ -106,7 +107,7 @@ class BloodRequestController extends Controller
             'exact_location' => 'required',
             'contact_number' => 'required',
             'city' => 'required',
-            'state' => 'required',
+            'country' => 'required'
         ]);
 
         $bloodRequest->update($request->all());

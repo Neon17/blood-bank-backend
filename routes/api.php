@@ -35,7 +35,7 @@ Route::post('/blood/requests', [BloodRequestController::class, 'store'])->middle
 Route::get('/blood/requests/{id}', [BloodRequestController::class, 'show']);
 Route::get('/blood/requests/{id}/edit', [BloodRequestController::class, 'edit'])->middleware('auth:sanctum');
 Route::patch('/blood/requests/{id}', [BloodRequestController::class, 'update'])->middleware('auth:sanctum');
-Route::delete('/blood/requests/{id}', [BloodRequestController::class, 'delete'])->middleware('auth:sanctum');
+Route::delete('/blood/requests/{id}', [BloodRequestController::class, 'destroy'])->middleware('auth:sanctum');
 Route::get('/donors', [UserController::class, 'donors'])->middleware('optionalSanctum');
 Route::post('/blood/requests/{id}/finish', [BloodRequestController::class, 'finish'])->middleware('auth:sanctum');
 
