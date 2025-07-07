@@ -21,8 +21,10 @@ envVarGroups:
     envVars:
       - key: APP_ENV
         value: production
+      - key: APP_DEBUG
+        value: 'true'  
       - key: APP_KEY
-        generateValue: true
+        value: 'base64:ELC7jEBTZzHiiEXPCYlLvj438RLW8l6JufuM0FBTBSw='
       - key: DB_CONNECTION
         value: pgsql
       - key: DB_HOST
