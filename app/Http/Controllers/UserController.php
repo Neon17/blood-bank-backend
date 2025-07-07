@@ -23,7 +23,6 @@ class UserController extends Controller
             'name' => 'required',
             'email' => 'required',
         ]);
-        $location = json_decode($request->location);
 
         // write all editable fields
         $user->name = $request->name;
@@ -35,8 +34,8 @@ class UserController extends Controller
         $user->current_city = $request->current_city;
         $user->will_donate = $request->will_donate?? false;
         
-        $user->latitude = $location->lat;
-        $user->longitude = $location->lng;
+        $user->latitude = $request->lat;
+        $user->longitude = $request->lng;
 
         $user->update();
         return response()->json([
