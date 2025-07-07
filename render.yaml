@@ -1,0 +1,37 @@
+services:
+  - type: web
+    name: laravel-app
+    env: docker
+    repo: https://github.com/Neon17/blood-bank-backend
+    branch: main
+    plan: free
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_KEY
+        generateValue: true
+      - key: DB_CONNECTION
+        value: mysql
+      - key: DB_HOST
+        fromService:
+          name: laravel-mysql
+          type: pserv
+          property: host
+      - key: DB_PORT
+        value: "3306"
+      - key: DB_DATABASE
+        value: laravel
+      - key: DB_USERNAME
+        value: root
+      - key: DB_PASSWORD
+        fromService:
+          name: laravel-mysql
+          type: pserv
+          property: password
+
+databases:
+  - name: laravel-mysql
+    plan: free
+    databaseName: laravel
+    user: root
