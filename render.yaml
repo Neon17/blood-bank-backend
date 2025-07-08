@@ -9,37 +9,24 @@ services:
     envVars:
       - fromGroup: laravel-env
 
-databases:
-  - name: laravel-pgsql
-    plan: free
-    databaseName: blood_bank_backend
-    user: renderuser
-    engine: postgres
-
 envVarGroups:
   - name: laravel-env
     envVars:
       - key: APP_ENV
         value: production
       - key: APP_DEBUG
-        value: 'true'  
+        value: 'true'
       - key: APP_KEY
         value: 'base64:ELC7jEBTZzHiiEXPCYlLvj438RLW8l6JufuM0FBTBSw='
       - key: DB_CONNECTION
         value: pgsql
       - key: DB_HOST
-        fromService:
-          name: laravel-pgsql
-          type: pserv
-          property: host
+        value: dpg-d1mesn15pdvs73cu66fg-a.singapore-postgres.render.com
       - key: DB_PORT
         value: "5432"
       - key: DB_DATABASE
         value: blood_bank_backend
       - key: DB_USERNAME
-        value: renderuser
+        value: root
       - key: DB_PASSWORD
-        fromService:
-          name: laravel-pgsql
-          type: pserv
-          property: password
+        value: vjQw2EPdyKMvFfsFG9wo8FUcjHnfRUIK

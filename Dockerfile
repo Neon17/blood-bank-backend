@@ -1,10 +1,10 @@
 FROM php:8.2-fpm
 
-# Install system dependencies and PHP extensions
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
-    git curl libpng-dev libonig-dev libxml2-dev zip unzip \
-    libzip-dev libpq-dev \
-    && docker-php-ext-install pdo pdo_pgsql mbstring bcmath gd zip
+    git curl zip unzip libpng-dev libonig-dev libxml2-dev libzip-dev libpq-dev \
+    && docker-php-ext-install pdo pdo_pgsql mbstring bcmath gd zip \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /var/www
@@ -12,22 +12,22 @@ WORKDIR /var/www
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Copy Laravel project files
+# Copy project files
 COPY . .
 
-# Copy start script and make executable
+# Add start script and set permissions
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
 
-# Install dependencies without dev
+# Install Laravel dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Set permissions for Laravel
+# Set Laravel permissions
 RUN chown -R www-data:www-data /var/www \
-    && chmod -R 755 /var/www/storage /var/www/bootstrap/cache
+    && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
-# Expose port 8000
+# Expose port
 EXPOSE 8000
 
-# Run start.sh script on container start
+# Start the app
 CMD ["/start.sh"]
