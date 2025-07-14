@@ -12,28 +12,36 @@ echo "DB_DATABASE: $DB_DATABASE"
 echo "Testing database connection..."
 sleep 3  # Give database time to be ready
 
-# Clear and cache configuration
-echo "Clearing and caching configuration..."
-php artisan config:clear
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
-
 # Show Laravel version and app info
 echo "Laravel version: $(php artisan --version)"
 echo "APP_ENV: $APP_ENV"
 echo "APP_DEBUG: $APP_DEBUG"
 echo "APP_KEY: ${APP_KEY:-NOT SET}"
 
-# Run migrations (this will test the real connection)
-echo "Running migrations..."
-if php artisan migrate --force; then
-  echo "✅ Migrations ran successfully."
+# Show database configuration
+echo "Laravel sees this DB config:"
+php artisan tinker --execute="dump(config('database.connections.pgsql'))"
+
+echo "🔍 Checking migration status..."
+if php artisan migrate:status 2>&1 | grep -q "Pending"; then
+    echo "⚠️ Pending migrations found. Running migrate..."
+    php artisan migrate --force
+elif php artisan migrate:status 2>&1 | grep -q "does not exist"; then
+    echo "❗ Migrations table missing. Running migrations for the first time..."
+    php artisan migrate --force
+elif php artisan migrate:status 2>&1 | grep -q "SQLSTATE"; then
+    echo "❌ Database connection issue. Exiting."
+    exit 1
 else
-  echo "❌ Migration failed! Check database connection."
-  echo "Current DB_CONNECTION: $DB_CONNECTION"
-  exit 1
+    echo "✅ All migrations are up to date. Skipping."
 fi
+
+# Clear and cache configuration
+echo "Clearing and caching configuration..."
+php artisan config:clear
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
 
 # Optional: Run seeders only if tables are empty (uncomment if needed)
 # if [ "$APP_ENV" = "production" ]; then
