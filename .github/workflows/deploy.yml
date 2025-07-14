@@ -27,7 +27,7 @@ jobs:
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: '8.1'
+        php-version: '8.3'
         extensions: mbstring, dom, fileinfo, mysql, gd
         coverage: xdebug
 
@@ -78,13 +78,9 @@ jobs:
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
     
     steps:
-    - uses: actions/checkout@v4
-
-    - name: Deploy to Render
-      uses: johnbeynon/render-deploy-action@v0.0.8
-      with:
-        service-id: ${{ secrets.RENDER_SERVICE_ID }}
-        api-key: ${{ secrets.RENDER_API_KEY }}
+    - name: Deploy to Render via Deploy Hook
+      run: |
+        curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
 
 ---
 
@@ -134,11 +130,7 @@ jobs:
 ---
 
 # GitHub Secrets you need to set:
-# RENDER_SERVICE_ID - Your Render service ID
-# RENDER_API_KEY - Your Render API key
-# RENDER_DEPLOY_HOOK_URL - Render deploy hook URL (if using webhook method)
-# DOCKER_USERNAME - Docker Hub username
-# DOCKER_PASSWORD - Docker Hub password/token
+# RENDER_DEPLOY_HOOK_URL - Your Render deploy hook URL (from Render dashboard)
 
 ---
 
