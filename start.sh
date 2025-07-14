@@ -35,6 +35,8 @@ echo "Laravel sees this DB config:"
 php artisan tinker --execute="dump(config('database.connections.pgsql'))"
 
 echo "🔍 Checking migration status..."
+echo "php artisan migrate:status = ".$(php artisan migrate:status);
+php artisan migrate --force
 if php artisan migrate:status 2>&1 | grep -q "Pending"; then
     echo "⚠️ Pending migrations found. Running migrate..."
     php artisan migrate --force
