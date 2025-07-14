@@ -9,7 +9,7 @@ if [ ! -f .env ]; then
 fi
 
 # Replace placeholders using actual environment vars
-envsubst < .env.example > .env
+# envsubst < .env.example > .env
 
 # Show database configuration
 echo "Database configuration:"
