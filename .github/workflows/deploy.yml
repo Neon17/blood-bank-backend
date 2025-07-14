@@ -1,5 +1,5 @@
 # .github/workflows/deploy.yml
-name: Deploy Laravel App to Render
+name: Test Laravel App
 
 on:
   push:
@@ -71,16 +71,6 @@ jobs:
         DB_USERNAME: root
         DB_PASSWORD: password
       run: php artisan test --stop-on-failure
-
-  deploy:
-    needs: test
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
-    
-    steps:
-    - name: Deploy to Render via Deploy Hook
-      run: |
-        curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
 
 ---
 
