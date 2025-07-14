@@ -2,6 +2,9 @@
 
 echo "==== Starting Laravel container ===="
 
+# To create sessions table if not present
+php artisan session:table
+
 # Copy .env.example to .env if not present
 echo "Copying env.example to .env"
 if [ ! -f .env ]; then
