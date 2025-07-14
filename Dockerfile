@@ -2,7 +2,7 @@ FROM php:8.2-fpm
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
-    git curl zip unzip libpng-dev libonig-dev libxml2-dev libzip-dev libpq-dev \
+    git curl zip unzip libpng-dev libonig-dev libxml2-dev libzip-dev libpq-dev gettext-base \
     && docker-php-ext-install pdo pdo_pgsql mbstring bcmath gd zip \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
