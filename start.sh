@@ -2,13 +2,15 @@
 
 echo "==== Starting Laravel container ===="
 
-# Wait for database to be ready
-echo "Waiting for database connection..."
-until php artisan db:show 2>/dev/null; do
-  echo "Database not ready, waiting 2 seconds..."
-  sleep 2
-done
-echo "✅ Database connection established!"
+# Show database configuration
+echo "Database configuration:"
+echo "DB_CONNECTION: $DB_CONNECTION"
+echo "DB_HOST: $DB_HOST"
+echo "DB_DATABASE: $DB_DATABASE"
+
+# Simple connection test
+echo "Testing database connection..."
+sleep 3  # Give database time to be ready
 
 # Clear and cache configuration
 echo "Clearing and caching configuration..."
@@ -23,15 +25,14 @@ echo "APP_ENV: $APP_ENV"
 echo "APP_DEBUG: $APP_DEBUG"
 echo "APP_KEY: ${APP_KEY:-NOT SET}"
 
-# Check if migrations table exists (safer migration check)
-echo "Checking database status..."
-if php artisan migrate:status 2>/dev/null; then
-  echo "✅ Migrations table exists, running pending migrations..."
-  php artisan migrate --force
+# Run migrations (this will test the real connection)
+echo "Running migrations..."
+if php artisan migrate --force; then
+  echo "✅ Migrations ran successfully."
 else
-  echo "🔄 First time setup, creating migrations table and running all migrations..."
-  php artisan migrate:install
-  php artisan migrate --force
+  echo "❌ Migration failed! Check database connection."
+  echo "Current DB_CONNECTION: $DB_CONNECTION"
+  exit 1
 fi
 
 # Optional: Run seeders only if tables are empty (uncomment if needed)
