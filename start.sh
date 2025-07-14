@@ -2,6 +2,15 @@
 
 echo "==== Starting Laravel container ===="
 
+# Copy .env.example to .env if not present
+echo "Copying env.example to .env"
+if [ ! -f .env ]; then
+  cp .env.example .env
+fi
+
+# Replace placeholders using actual environment vars
+envsubst < .env.example > .env
+
 # Show database configuration
 echo "Database configuration:"
 echo "DB_CONNECTION: $DB_CONNECTION"
