@@ -47,6 +47,10 @@ class User extends Authenticatable
         return $this->hasMany(BloodRequest::class);
     }
 
+    public function donorApplication() {
+        return $this->hasOne(Donor::class);
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *

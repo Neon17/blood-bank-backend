@@ -4,8 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BloodRequestController;
+use App\Http\Controllers\DonorController;
 use App\Http\Controllers\UserController;
-use Illuminate\Support\Facades\Auth;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -16,7 +16,7 @@ Route::get('/test', [UserController::class, 'test']);
 // now do user signup and create token
 // create route to regenerate sanctum token
 
-Route::get('/signin', function() {
+Route::get('/signin', function () {
     return response()->json([
         'status' => 'Authenticated Required',
         'message' => 'Please login or signup to view this route'
@@ -27,7 +27,7 @@ Route::post('/signup', [AuthController::class, 'signup']);
 Route::post('/logout', [AuthController::class, 'login']);
 Route::post('/makeMeDonor', [UserController::class, 'makeMeDonor'])->middleware('auth:sanctum');
 Route::post('/removeMeDonor', [UserController::class, 'removeMeDonor'])->middleware('auth:sanctum');
-Route::match(['put', 'post'],'/updateMe', [UserController::class, 'updateMe'])->middleware('auth:sanctum');
+Route::match(['put', 'post'], '/updateMe', [UserController::class, 'updateMe'])->middleware('auth:sanctum');
 
 // Route::resource('/blood/requests', BloodRequestController::class);
 Route::get('/blood/requests', [BloodRequestController::class, 'index'])->middleware('optionalSanctum');
@@ -41,7 +41,23 @@ Route::post('/blood/requests/{id}/finish', [BloodRequestController::class, 'fini
 
 Route::get('/users', [UserController::class, 'index']);
 
-Route::get('/sanctum/csrf-cookie', function(){
+Route::middleware('optionalSanctum')->group(function () {
+    Route::get('/blood/donors', [DonorController::class, 'index']); // Public
+});
+
+// Group for authenticated users
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/blood/donors', [DonorController::class, 'store']);
+    Route::get('/blood/donors/{donor}', [DonorController::class, 'show']);
+    Route::put('/blood/donors/{donor}', [DonorController::class, 'update']);
+    Route::delete('/blood/donors/{donor}', [DonorController::class, 'destroy']);
+
+    // Only admin can change verification status
+    Route::patch('/blood/donors/{donor}/status', [DonorController::class, 'changeStatus'])
+        ->middleware('isAdmin');
+});
+
+Route::get('/sanctum/csrf-cookie', function () {
     try {
         return response()->json(['message' => 'CSRF token cookie set']);
     } catch (\Throwable $th) {
