@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreDonorRequest;
+use App\Http\Requests\UpdateDonorRequest;
 use App\Models\Donor;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -25,55 +27,15 @@ class DonorController extends Controller
 
     public function show(Donor $donor)
     {
-        if (!$donor) {
-            return response()->json([
-                'status' => 'fail',
-                'message' => 'Please select valid donor Id to show donor application'
-            ], 400);
-        }
         return response()->json([
             'status' => 'success',
             'data' => $donor
         ], 200);
     }
 
-    public function store(Request $request)
+    public function store(StoreDonorRequest $request)
     {
-
-        $validator = Validator::make($request->all(), [
-            'contact_number' => 'required|numeric|digits_between:7,15',
-            'blood_type' => 'required|string|in:A+,A-,O+,O-,B+,B-,AB+,AB-',
-            'address' => 'required|string|max:250',
-            'date_of_birth' => [
-                'required',
-                'date',
-                function ($attribute, $value, $fail) {
-                    if (Carbon::parse($value)->age < 18)
-                        $fail("You must be at least 18 years old to register and verify as donor");
-                }
-            ],
-            'weight' => 'required|numeric|min:45',
-            'height' => 'required|numeric|max:600',
-            'last_donated_date' => 'required|date',
-            'medical_conditions' => 'nullable|string',
-            'current_medication' => 'nullable|string',
-            'current_health_status' => 'required|string',
-
-            'latitude' => 'required|numeric|between:-90,90',
-            'longitude' => 'required|numeric|between:-180,180',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 'fail',
-                'message' => 'validation error',
-                'errors' => $validator->errors()
-            ], 422, [
-                'Content-Type' => 'text/json'
-            ]);
-        }
-
-        $data = $validator->validated();
+        $data = $request->validated();
         $data["user_id"] = $request->user()->id;
 
         $donorApplication = Donor::create($data);
@@ -116,7 +78,7 @@ class DonorController extends Controller
         }
     }
 
-    public function update(Request $request, Donor $donor)
+    public function update(UpdateDonorRequest $request, Donor $donor)
     {
         $donorApplication = $donor;
         if (!$donorApplication) {
@@ -128,7 +90,7 @@ class DonorController extends Controller
             ]);
         }
         $id = Auth::id();
-        info ("donor id is $donor->user_id and Auth id is $id");
+
         // Authorization check
         if (!($donor->user_id !== Auth::id() || Auth::user()->role !== 'ADMIN')) {
             return response()->json([
@@ -137,43 +99,8 @@ class DonorController extends Controller
             ], 403);
         }
 
-
-        $validator = Validator::make($request->all(), [
-            'contact_number' => 'sometimes|numeric|digits_between:7,15',
-            'blood_type' => 'sometimes|string|in:A+,A-,O+,O-,B+,B-,AB+,AB-',
-            'address' => 'sometimes|string|max:250',
-            'date_of_birth' => [
-                'sometimes',
-                'date',
-                function ($attribute, $value, $fail) {
-                    if (Carbon::parse($value)->age < 18) {
-                        $fail('You must be at least 18 years old to register as a donor.');
-                    }
-                }
-            ],
-            'weight' => 'sometimes|numeric|min:45',
-            'height' => 'sometimes|numeric|max:600',
-            'last_donated_date' => 'sometimes|date',
-            'medical_conditions' => 'nullable|string',
-            'current_medication' => 'nullable|string',
-            'current_health_status' => 'sometimes|string',
-
-            'latitude' => 'sometimes|numeric|between:-90,90',
-            'longitude' => 'sometimes|numeric|between:-180,180',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 'fail',
-                'message' => 'validation Error',
-                'errors' => $validator->errors()
-            ], 422, [
-                'Content-Type' => 'text/json'
-            ]);
-        }
-
         $donorApplication = Donor::find($donor->id);
-        $donorApplication->update($validator->validated());
+        $donorApplication->update($request->validated());
         return response()->json([
             'status' => 'success',
             'data' => $donorApplication
