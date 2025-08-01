@@ -13,15 +13,22 @@ class UserController extends Controller
     public function index()
     {
         $user = User::get();
-        return $user;
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $user
+        ], 200);
     }
 
-    public function updateMe(Request $request) {
+    public function updateMe(Request $request)
+    {
         $user = User::find(Auth::id());
 
         $request->validate([
             'name' => 'required',
             'email' => 'required',
+            'address' => 'required',
+            'dob' => 'required'
         ]);
 
         // write all editable fields
@@ -32,8 +39,8 @@ class UserController extends Controller
         $user->city = $request->city;
         $user->country = $request->country;
         $user->current_city = $request->current_city;
-        $user->will_donate = $request->will_donate?? false;
-        
+        $user->will_donate = $request->will_donate ?? false;
+
         $user->latitude = $request->lat;
         $user->longitude = $request->lng;
 
@@ -51,18 +58,17 @@ class UserController extends Controller
         $users = null;
 
         info("blood donors index hit");
-        if (Auth::check()){
+        if (Auth::check()) {
             $latitude = Auth::user()->latitude;
             $longitude = Auth::user()->longitude;
-    
+
             $radiusInKm = request('radiusInKm') ?? null;
-    
+
             if ($radiusInKm)
                 $users = User::donors()->nearby($latitude, $longitude, $radiusInKm)->get();
-            else 
+            else
                 $users = User::donors()->get();
-        }
-        else {
+        } else {
             $users = User::donors()->get();
         }
 

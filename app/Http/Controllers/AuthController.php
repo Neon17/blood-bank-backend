@@ -21,7 +21,7 @@ class AuthController extends Controller
         if (!$user) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'User not found'
+                'message' => 'Invalid Credentials'
             ], 401);
         }
 
@@ -54,7 +54,8 @@ class AuthController extends Controller
             'email' => $request->email,
             'password' => $request->password,
             'address' => $request->address || null,
-            'dob' => $request->dob || null
+            'dob' => $request->dob || null,
+            'role' => 'admin'
         ]);
         if ($user) {
             $token = $user->createToken('api-token')->plainTextToken;

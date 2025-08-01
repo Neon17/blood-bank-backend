@@ -19,7 +19,7 @@ class DonorController extends Controller
         return response()->json([
             'status' => 'success',
             'total' => count($donorApplication),
-            'donor_applications' => $donorApplication
+            'data' => $donorApplication
         ], 200, [
             'Content-Type' => 'text/json'
         ]);

@@ -39,7 +39,7 @@ Route::delete('/blood/requests/{id}', [BloodRequestController::class, 'destroy']
 Route::get('/donors', [UserController::class, 'donors'])->middleware('optionalSanctum');
 Route::post('/blood/requests/{id}/finish', [BloodRequestController::class, 'finish'])->middleware('auth:sanctum');
 
-Route::get('/users', [UserController::class, 'index']);
+Route::get('/users', [UserController::class, 'index'])->middleware(['auth:sanctum', 'isAdmin']);
 
 Route::middleware('optionalSanctum')->group(function () {
     Route::get('/blood/donors', [DonorController::class, 'index']); // Public

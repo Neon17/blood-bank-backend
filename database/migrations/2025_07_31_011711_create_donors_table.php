@@ -32,6 +32,8 @@ return new class extends Migration
             // Contact Location
             $table->decimal('latitude', 10, 7)->nullable();
             $table->decimal('longitude', 10, 7)->nullable();
+            $table->string('country')->default('Nepal')->nullable();
+            $table->string('city')->default('Kathmandu')->nullable();
 
             // Verification
             $table->enum('verification_status', ['pending', 'approved', 'wrong'])->nullable();
