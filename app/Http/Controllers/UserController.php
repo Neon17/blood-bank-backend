@@ -53,9 +53,21 @@ class UserController extends Controller
         ]);
     }
 
-    public function donors()
+    public function donors(Request $request)
     {
         $users = null;
+
+        if ($request->query('search')) {
+            $donorApplication = User::where('name', 'like', '%' . $request->search . '%')
+                ->where('will_donate', '1')->get();
+            return response()->json([
+                'status' => 'success',
+                'total' => count($donorApplication),
+                'data' => $donorApplication
+            ], 200, [
+                'Content-Type' => 'text/json'
+            ]);
+        }
 
         info("blood donors index hit");
         if (Auth::check()) {

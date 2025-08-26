@@ -10,12 +10,38 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
+use function Laravel\Prompts\select;
+
 class DonorController extends Controller
 {
     //
-    public function index()
+    public function index(Request $request)
     {
-        $donorApplication = Donor::all();
+        if ($request->query('search')) {
+            dd('search');
+            $donorApplication = Donor::whereHas('user', function ($query) use ($request) {
+                $query->where('name', 'like', '%' . $request->search . '%');
+            })->with('user')->get();
+            return response()->json([
+                'status' => 'success',
+                'total' => count($donorApplication),
+                'data' => $donorApplication
+            ], 200, [
+                'Content-Type' => 'text/json'
+            ]);
+        }
+        else if ($request->has('status')) {
+            $donorApplication = Donor::where('status', $request->status)->with('user')->get();
+            return response()->json([
+                'status' => 'success',
+                'total' => count($donorApplication),
+                'data' => $donorApplication
+            ], 200, [
+                'Content-Type' => 'text/json'
+            ]);
+        }
+
+        $donorApplication = Donor::with('user')->get();
         return response()->json([
             'status' => 'success',
             'total' => count($donorApplication),
@@ -140,9 +166,9 @@ class DonorController extends Controller
 
         $data = $validator->validated();
 
-        $updatedDonor = $donor->update([
-            'status' => $data['status'],
-            'message' => $data['message'] ?? null
+        $updatedDonor = Donor::where('id', $donor->id)->update([
+            'verification_status' => $data['status'],
+            'admin_message' => $data['message']??null
         ]);
 
         return response()->json([

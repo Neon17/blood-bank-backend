@@ -55,7 +55,7 @@ class AuthController extends Controller
             'password' => $request->password,
             'address' => $request->address || null,
             'dob' => $request->dob || null,
-            'role' => 'admin'
+            // 'role' => 'admin'
         ]);
         if ($user) {
             $token = $user->createToken('api-token')->plainTextToken;
