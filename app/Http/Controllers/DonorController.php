@@ -33,6 +33,17 @@ class DonorController extends Controller
         ], 200);
     }
 
+    public function me() {
+        $donorApplication = Donor::where('user_id', Auth::id())->get();
+        return response()->json([
+            'status' => 'success',
+            'total' => count($donorApplication),
+            'data' => $donorApplication[0]
+        ], 200, [
+            'Content-Type' => 'text/json'
+        ]);
+    }
+
     public function store(StoreDonorRequest $request)
     {
         $data = $request->validated();

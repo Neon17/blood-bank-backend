@@ -48,9 +48,12 @@ Route::middleware('optionalSanctum')->group(function () {
 // Group for authenticated users
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/blood/donors', [DonorController::class, 'store']);
+    Route::get('/blood/donors/me', [DonorController::class, 'me']);
     Route::get('/blood/donors/{donor}', [DonorController::class, 'show']);
     Route::put('/blood/donors/{donor}', [DonorController::class, 'update']);
     Route::delete('/blood/donors/{donor}', [DonorController::class, 'destroy']);
+
+    // Route::get('/blood/donors/{donor}/edit', [DonorController::class, 'edit']);
 
     // Only admin can change verification status
     Route::patch('/blood/donors/{donor}/status', [DonorController::class, 'changeStatus'])

@@ -35,7 +35,7 @@ return new class extends Migration
             $table->string('country')->default('Nepal')->nullable();
             $table->string('city')->default('Kathmandu')->nullable();
 
-            // Verification
+            // Verification (NULL means pending)
             $table->enum('verification_status', ['pending', 'approved', 'wrong'])->nullable();
             $table->string('admin_message')->nullable();
 
