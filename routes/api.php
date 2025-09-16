@@ -53,7 +53,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/blood/donors/{donor}', [DonorController::class, 'update']);
     Route::delete('/blood/donors/{donor}', [DonorController::class, 'destroy']);
 
-    // Route::get('/blood/donors/{donor}/edit', [DonorController::class, 'edit']);
+    Route::get('/blood/donors/{donor}/edit', [DonorController::class, 'edit']);
 
     // Only admin can change verification status
     Route::patch('/blood/donors/{donor}/status', [DonorController::class, 'changeStatus'])

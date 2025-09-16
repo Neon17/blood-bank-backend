@@ -18,18 +18,17 @@ class BloodRequestController extends Controller
         // If request has no query parameter (radiusInKm), then all requests are shown
 
         info("blood requests index hit");
-        if (Auth::check()){
+        if (Auth::check()) {
             $latitude = Auth::user()->latitude;
             $longitude = Auth::user()->longitude;
-    
+
             $radiusInKm = request('radiusInKm') ?? null;
-    
+
             if ($radiusInKm)
                 $bloodRequest = BloodRequest::with('user', 'bloodBank')->nearby($latitude, $longitude, $radiusInKm)->get();
-            else 
+            else
                 $bloodRequest = BloodRequest::with('user', 'bloodBank')->get();
-        }
-        else 
+        } else
             $bloodRequest = BloodRequest::with('user', 'bloodBank')->get();
 
         return response()->json([
@@ -53,12 +52,14 @@ class BloodRequestController extends Controller
 
         $request->validate([
             'blood_type' => 'required',
-            'quantity' => 'required',
-            'date_time' => 'required',
+            'quantity' => 'required|numeric|min:1',
+            'date_time' => 'required|date',
             'exact_location' => 'required',
-            'contact_number' => 'required',
+            'contact_number' => 'required|numeric|digits_between:7,15',
             'city' => 'required',
             'country' => 'required',
+            'latitude' => 'required|numeric|between:-90,90',
+            'longitude' => 'required|numeric|between:-180,180',
         ]);
 
         $bloodRequest = new BloodRequest();
@@ -66,6 +67,11 @@ class BloodRequestController extends Controller
         $bloodRequest->quantity = $request->quantity;
         $bloodRequest->date_time = $request->date_time;
         $bloodRequest->exact_location = $request->exact_location;
+
+        // Trim and round the decimal places before assigning
+        $bloodRequest->latitude = round($request->latitude, 8);
+        $bloodRequest->longitude = round($request->longitude, 8);
+
         $bloodRequest->contact_number = $request->contact_number;
         $bloodRequest->city = $request->city;
         $bloodRequest->state = $request->state;
@@ -78,7 +84,8 @@ class BloodRequestController extends Controller
         ]);
     }
 
-    public function finish($id) {
+    public function finish($id)
+    {
         // if blood request is fulfilled, it goes to this route
         $bloodRequest = BloodRequest::find($id);
         $bloodRequest->active_status = false;
@@ -89,7 +96,7 @@ class BloodRequestController extends Controller
         ]);
     }
 
-    public function edit (BloodRequest $bloodRequest) 
+    public function edit(BloodRequest $bloodRequest)
     {
         return response()->json([
             'status' => 'success',

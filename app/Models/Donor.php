@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\NearbyScope;
 use Illuminate\Database\Eloquent\Model;
 
 class Donor extends Model
 {
+    use NearbyScope;
+    
     protected $fillable = [
         'id',
         'user_id',

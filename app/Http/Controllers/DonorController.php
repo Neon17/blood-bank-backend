@@ -17,31 +17,23 @@ class DonorController extends Controller
     //
     public function index(Request $request)
     {
-        if ($request->query('search')) {
-            dd('search');
-            $donorApplication = Donor::whereHas('user', function ($query) use ($request) {
-                $query->where('name', 'like', '%' . $request->search . '%');
-            })->with('user')->get();
-            return response()->json([
-                'status' => 'success',
-                'total' => count($donorApplication),
-                'data' => $donorApplication
-            ], 200, [
-                'Content-Type' => 'text/json'
-            ]);
-        }
-        else if ($request->has('status')) {
-            $donorApplication = Donor::where('status', $request->status)->with('user')->get();
-            return response()->json([
-                'status' => 'success',
-                'total' => count($donorApplication),
-                'data' => $donorApplication
-            ], 200, [
-                'Content-Type' => 'text/json'
-            ]);
+        $blood_group = $request->query('blood_group');
+        $radius = $request->query('radius');
+        $latitude = $request->query('latitude');
+        $longitude = $request->query('longitude');
+        $donorApplication = null;
+
+        info($request->query());
+
+        if ($blood_group) {
+            info("everything defined");
+            $donorApplication = Donor::with('user')->where('blood_group', $blood_group)->nearby($latitude, $longitude, $radius)->get();
+        }  
+        else {
+            info("everything undefined");
+            $donorApplication = Donor::with('user')->nearby($latitude, $longitude, $radius)->get();
         }
 
-        $donorApplication = Donor::with('user')->get();
         return response()->json([
             'status' => 'success',
             'total' => count($donorApplication),

@@ -22,10 +22,10 @@ return new class extends Migration
             $table->string('exact_location'); // hospital name or some healthcare center name
             $table->string('contact_number');
 
-            // Location-based features (user can pick from map)
-            $table->decimal('latitude', 10, 8)->nullable();
-            $table->decimal('longitude', 11, 8)->nullable();
-            $table->string('city', 100)->nullable();
+            // Location-based features (user can pick from map), fallback to Kathmandu if not filled
+            $table->decimal('latitude', 10, 8)->default(27.7172);
+            $table->decimal('longitude', 11, 8)->default(85.3240);
+            $table->string('city', 100)->nullable()->default('Kathmandu');
             $table->string('state', 100)->nullable();
             $table->string('country', 100)->default('Nepal');
 
