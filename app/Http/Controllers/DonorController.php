@@ -23,14 +23,10 @@ class DonorController extends Controller
         $longitude = $request->query('longitude');
         $donorApplication = null;
 
-        info($request->query());
-
         if ($blood_group) {
-            info("everything defined");
             $donorApplication = Donor::with('user')->where('blood_group', $blood_group)->nearby($latitude, $longitude, $radius)->get();
         }  
         else {
-            info("everything undefined");
             $donorApplication = Donor::with('user')->nearby($latitude, $longitude, $radius)->get();
         }
 

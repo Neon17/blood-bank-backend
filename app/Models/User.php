@@ -34,6 +34,7 @@ class User extends Authenticatable
         'current_city',
         'latitude',
         'longitude',
+        'blood_group',
         'will_donate',
         'verified_as_donor',
         'last_donated',

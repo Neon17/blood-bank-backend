@@ -28,7 +28,8 @@ class UserController extends Controller
             'name' => 'required',
             'email' => 'required',
             'address' => 'required',
-            'dob' => 'required'
+            'blood_group' => 'required|in:A+,A-,O+,O-,B+,B-,AB+,AB-',
+            'dob' => 'required|date'
         ]);
 
         // write all editable fields
@@ -40,6 +41,9 @@ class UserController extends Controller
         $user->country = $request->country;
         $user->current_city = $request->current_city;
         $user->will_donate = $request->will_donate ?? false;
+        if ($request->blood_group) {
+            $user->blood_group = $request->blood_group;
+        }
 
         $user->latitude = $request->lat;
         $user->longitude = $request->lng;
@@ -69,7 +73,6 @@ class UserController extends Controller
             ]);
         }
 
-        info("blood donors index hit");
         if (Auth::check()) {
             $latitude = Auth::user()->latitude;
             $longitude = Auth::user()->longitude;
