@@ -37,32 +37,32 @@ class DonorFactory extends Factory
 
         if ($selectedCity) {
             // small random offset around city
-            $latitude = $selectedCity['lat'] + $this->faker->randomFloat(5, -0.02, 0.02);
-            $longitude = $selectedCity['lng'] + $this->faker->randomFloat(5, -0.02, 0.02);
+            $latitude = $selectedCity['lat'] + fake()->randomFloat(5, -0.02, 0.02);
+            $longitude = $selectedCity['lng'] + fake()->randomFloat(5, -0.02, 0.02);
             $cityName = $selectedCity['city'];
         } else {
             // random Nepal-wide point
-            $latitude = $this->faker->latitude(26.3667, 30.4500);
-            $longitude = $this->faker->longitude(80.0667, 88.2000);
+            $latitude = fake()->latitude(26.3667, 30.4500);
+            $longitude = fake()->longitude(80.0667, 88.2000);
             $cityName = null;
         }
 
         return [
             'user_id' => null, // assign via ->for(User) in seeder
-            'contact_number' => '98' . $this->faker->randomNumber(8, true),
-            'blood_type' => $this->faker->randomElement(self::BLOOD_TYPES),
-            'address' => $this->faker->streetAddress() . ($cityName ? ", $cityName" : "") . ', Nepal',
-            'date_of_birth' => $this->faker->dateTimeBetween('-90 years', '-10 years')->format('Y-m-d'),
-            'weight' => $this->faker->randomFloat(2, 45, 100),
-            'height' => $this->faker->randomFloat(2, 150, 200),
-            'last_donated_date' => $this->faker->dateTimeBetween('2000-01-01', 'now')->format('Y-m-d'),
-            'medical_conditions' => $this->faker->sentence(),
-            'current_medication' => $this->faker->sentence(),
-            'current_health_status' => $this->faker->sentence(),
+            'contact_number' => '98' . fake()->randomNumber(8, true),
+            'blood_type' => fake()->randomElement(self::BLOOD_TYPES),
+            'address' => fake()->streetAddress() . ($cityName ? ", $cityName" : "") . ', Nepal',
+            'date_of_birth' => fake()->dateTimeBetween('-90 years', '-10 years')->format('Y-m-d'),
+            'weight' => fake()->randomFloat(2, 45, 100),
+            'height' => fake()->randomFloat(2, 150, 200),
+            'last_donated_date' => fake()->dateTimeBetween('2000-01-01', 'now')->format('Y-m-d'),
+            'medical_conditions' => fake()->sentence(),
+            'current_medication' => fake()->sentence(),
+            'current_health_status' => fake()->sentence(),
             'latitude' => $latitude,
             'longitude' => $longitude,
-            'verification_status' => $this->faker->optional()->randomElement(self::VERIFICATION_STATUSES),
-            'admin_message' => $this->faker->optional()->sentence(),
+            'verification_status' => fake()->optional()->randomElement(self::VERIFICATION_STATUSES),
+            'admin_message' => fake()->optional()->sentence(),
             'city' => $cityName,
         ];
     }

@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Hash;
 
 class UserFactory extends Factory
 {
@@ -35,33 +36,33 @@ class UserFactory extends Factory
         }
 
         if ($selectedCity) {
-            $latitude = $selectedCity['lat'] + $this->faker->randomFloat(5, -0.02, 0.02);
-            $longitude = $selectedCity['lng'] + $this->faker->randomFloat(5, -0.02, 0.02);
+            $latitude = $selectedCity['lat'] + fake()->randomFloat(5, -0.02, 0.02);
+            $longitude = $selectedCity['lng'] + fake()->randomFloat(5, -0.02, 0.02);
             $cityName = $selectedCity['city'];
         } else {
-            $latitude = $this->faker->latitude(26.3667, 30.4500);
-            $longitude = $this->faker->longitude(80.0667, 88.2000);
+            $latitude = fake()->latitude(26.3667, 30.4500);
+            $longitude = fake()->longitude(80.0667, 88.2000);
             $cityName = null;
         }
 
         return [
-            'name' => $this->faker->name(),
-            'email' => $this->faker->unique()->safeEmail(),
+            'name' => fake()->name(),
+            'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
-            'address' => $this->faker->streetAddress() . ($cityName ? ", $cityName" : "") . ', Nepal',
-            'role' => $this->faker->randomElement(self::ROLES),
-            'dob' => $this->faker->dateTimeBetween('-90 years', '-10 years')->format('Y-m-d'),
-            'phone_number' => '98' . $this->faker->randomNumber(8, true),
+            'address' => fake()->streetAddress() . ($cityName ? ", $cityName" : "") . ', Nepal',
+            'role' => fake()->randomElement(self::ROLES),
+            'dob' => fake()->dateTimeBetween('-90 years', '-10 years')->format('Y-m-d'),
+            'phone_number' => '98' . fake()->randomNumber(8, true),
             'city' => $cityName,
             'country' => 'Nepal',
-            'current_city' => $cityName ?? $this->faker->city(),
+            'current_city' => $cityName ?? fake()->city(),
             'latitude' => $latitude,
             'longitude' => $longitude,
-            'blood_group' => $this->faker->randomElement(self::BLOOD_GROUPS),
-            'will_donate' => $this->faker->boolean(50),
-            'verified_as_donor' => $this->faker->boolean(30),
-            'last_donated' => $this->faker->dateTimeBetween('2000-01-01', 'now')->format('Y-m-d'),
-            'password' => bcrypt('password'),
+            'blood_group' => fake()->randomElement(self::BLOOD_GROUPS),
+            'will_donate' => fake()->boolean(50),
+            'verified_as_donor' => fake()->boolean(30),
+            'last_donated' => fake()->dateTimeBetween('2000-01-01', 'now')->format('Y-m-d'),
+            'password' => Hash::make('password'),
         ];
     }
 }

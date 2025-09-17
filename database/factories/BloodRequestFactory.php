@@ -35,29 +35,29 @@ class BloodRequestFactory extends Factory
         }
 
         if ($selectedCity) {
-            $latitude = $selectedCity['lat'] + $this->faker->randomFloat(5, -0.02, 0.02);
-            $longitude = $selectedCity['lng'] + $this->faker->randomFloat(5, -0.02, 0.02);
+            $latitude = $selectedCity['lat'] + fake()->randomFloat(5, -0.02, 0.02);
+            $longitude = $selectedCity['lng'] + fake()->randomFloat(5, -0.02, 0.02);
             $cityName = $selectedCity['city'];
         } else {
-            $latitude = $this->faker->latitude(26.3667, 30.4500);
-            $longitude = $this->faker->longitude(80.0667, 88.2000);
+            $latitude = fake()->latitude(26.3667, 30.4500);
+            $longitude = fake()->longitude(80.0667, 88.2000);
             $cityName = null;
         }
 
         return [
-            'blood_type' => $this->faker->randomElement(self::BLOOD_TYPES),
-            'quantity' => $this->faker->numberBetween(1, 5),
-            'date_time' => $this->faker->dateTimeBetween('now', '+1 year'),
-            'exact_location' => $this->faker->streetAddress() . ($cityName ? ", $cityName" : "") . ', Nepal',
+            'blood_type' => fake()->randomElement(self::BLOOD_TYPES),
+            'quantity' => fake()->numberBetween(1, 5),
+            'date_time' => fake()->dateTimeBetween('now', '+1 year'),
+            'exact_location' => fake()->streetAddress() . ($cityName ? ", $cityName" : "") . ', Nepal',
             'latitude' => $latitude,
             'longitude' => $longitude,
-            'contact_number' => '98' . $this->faker->randomNumber(8, true),
+            'contact_number' => '98' . fake()->randomNumber(8, true),
             'city' => $cityName,
-            'state' => $this->faker->state(),
+            'state' => fake()->state(),
             'country' => 'Nepal',
             'user_id' => null, // assign via ->for(User)
-            'status' => $this->faker->randomElement(self::STATUSES),
-            'active_status' => $this->faker->boolean(80),
+            'status' => fake()->randomElement(self::STATUSES),
+            'active_status' => fake()->boolean(80),
             'donated_by' => null,
             'donated_by_user' => null,
             'donated_by_blood_banks' => null,
