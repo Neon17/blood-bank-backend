@@ -3,11 +3,12 @@
 namespace App\Models;
 
 use App\Traits\NearbyScope;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Donor extends Model
 {
-    use NearbyScope;
+    use NearbyScope, HasFactory;
     
     protected $fillable = [
         'id',

@@ -27,6 +27,7 @@ class User extends Authenticatable
         'address',
         'role',
         'dob',
+        'phone_number',
         'password',
         'city',
         'country',

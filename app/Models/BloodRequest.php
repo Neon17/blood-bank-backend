@@ -4,12 +4,13 @@ namespace App\Models;
 
 use App\Traits\NearbyScope;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class BloodRequest extends Model
 {
     //
-    use NearbyScope;
+    use NearbyScope, HasFactory;
 
     protected $table = 'blood_requests';
 
@@ -17,8 +18,14 @@ class BloodRequest extends Model
         'blood_type',
         'quantity',
         'date_time',
-        'location',
+        'exact_location',
+        'latitude',
+        'longitude',
         'contact_number',
+        'date_time',
+        'city',
+        'state',
+        'country',
         'user_id',
         'blood_bank_id',
         'status',
