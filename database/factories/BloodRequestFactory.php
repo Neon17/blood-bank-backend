@@ -9,7 +9,8 @@ class BloodRequestFactory extends Factory
     protected $model = \App\Models\BloodRequest::class;
 
     private const BLOOD_TYPES = ['A+', 'A-', 'O+', 'O-', 'B+', 'B-', 'AB+', 'AB-'];
-    private const STATUSES = ['Pending', 'Approved', 'Rejected'];
+    private const STATUSES = ['Pending', 'Cancelled', 'Completed'];
+    private const VERIFICATION_STATUSES = ['Pending', 'Approved', 'Rejected'];
 
     private const MAJOR_CITIES = [
         ['city' => 'Kathmandu', 'lat' => 27.7172, 'lng' => 85.3240, 'weight' => 0.3],
@@ -57,6 +58,7 @@ class BloodRequestFactory extends Factory
             'country' => 'Nepal',
             'user_id' => null, // assign via ->for(User)
             'status' => fake()->randomElement(self::STATUSES),
+            'verification_status' => fake()->randomElement(self::VERIFICATION_STATUSES),
             'active_status' => fake()->boolean(80),
             'donated_by' => null,
             'donated_by_user' => null,
