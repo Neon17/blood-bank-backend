@@ -32,7 +32,10 @@ return new class extends Migration
             // receiver can be user or blood bank (as per necessity)
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete()->nullable(); // receiver
             // $table->foreignId('blood_bank_id')->constrained('blood_banks')->cascadeOnDelete()->nullable(); // receiver
-            $table->string('status')->default('pending'); // It can be completed, donated or pending
+
+            $table->string('status')->enum('status', ['pending', 'cancelled', 'completed']);
+            $table->string('verification_status')->enum('verification_status', ['pending', 'approved', 'wrong']);
+            
 
             $table->string('donated_by')->nullable();
 

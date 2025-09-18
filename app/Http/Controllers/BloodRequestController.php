@@ -37,6 +37,22 @@ class BloodRequestController extends Controller
         ]);
     }
 
+    public function yourRequests() {
+        $bloodRequests = BloodRequest::where('user_id', Auth::user()->id)->with('user', 'bloodBank')->get();
+        return response()->json([
+            'status' => 'success',
+            'data' => $bloodRequests
+        ]);
+    }
+
+    public function allRequests() {
+        $bloodRequests = BloodRequest::withoutGlobalScope('active')->with('user', 'bloodBank')->get();
+        return response()->json([
+            'status' => 'success',
+            'data' => $bloodRequests
+        ]); 
+    }
+
     public function store(Request $request)
     {
         // should we use attach($user_id) here?
@@ -95,6 +111,55 @@ class BloodRequestController extends Controller
             'data' => $bloodRequest
         ]);
     }
+
+    public function adminApproveRequest($id){
+        // Admin approves the request as legal and verified not scam
+        $request = BloodRequest::find($id);
+        $request->active_status = true;
+        $request->verification_status = 'approved';
+        $request->update();
+        return response()->json([
+            'status' => 'success',
+            'data' => $request
+        ]);
+    }
+
+    public function adminRejectRequest($id) {
+        // Admin can reject the request if found suspicious and not legal
+        $request = BloodRequest::find($id);
+        $request->active_status = false;
+        $request->verification_status = 'rejected';
+        $request->update();
+        return response()->json([
+            'status' => 'success',
+            'data' => $request
+        ]);
+    }
+
+    public function cancelRequest($id) {
+        // User can cancel the request saying it wasn't necessary
+        $request = BloodRequest::find($id);
+        $request->active_status = false;
+        $request->status = 'cancelled';
+        $request->update();
+        return response()->json([
+            'status' => 'success',
+            'data' => $request
+        ]);
+    }
+
+    public function completeRequest($id) {
+        // User can complete the request saying it was necessary
+        $request = BloodRequest::find($id);
+        $request->active_status = false;
+        $request->status = 'completed';
+        $request->update();
+        return response()->json([
+            'status' => 'success',
+            'data' => $request
+        ]);
+    }
+
 
     public function edit(BloodRequest $bloodRequest)
     {

@@ -32,8 +32,17 @@ Route::match(['put', 'post'], '/updateMe', [UserController::class, 'updateMe'])-
 // Route::resource('/blood/requests', BloodRequestController::class);
 Route::get('/blood/requests', [BloodRequestController::class, 'index'])->middleware('optionalSanctum');
 Route::post('/blood/requests', [BloodRequestController::class, 'store'])->middleware('auth:sanctum');
+
+// Only admin can see all requests active, inactive or scam
+Route::get('/blood/requests/all', [BloodRequestController::class, 'allRequests'])
+    ->middleware(['auth:sanctum', 'isAdmin']);
+
+Route::get('/blood/requests/yours', [BloodRequestController::class, 'yours'])->middleware('auth:sanctum');
+
 Route::get('/blood/requests/{id}', [BloodRequestController::class, 'show']);
 Route::get('/blood/requests/{id}/edit', [BloodRequestController::class, 'edit'])->middleware('auth:sanctum');
+
+
 Route::patch('/blood/requests/{id}', [BloodRequestController::class, 'update'])->middleware('auth:sanctum');
 Route::delete('/blood/requests/{id}', [BloodRequestController::class, 'destroy'])->middleware('auth:sanctum');
 Route::get('/donors', [UserController::class, 'donors'])->middleware('optionalSanctum');
@@ -58,6 +67,13 @@ Route::middleware('auth:sanctum')->group(function () {
     // Only admin can change verification status
     Route::patch('/blood/donors/{donor}/status', [DonorController::class, 'changeStatus'])
         ->middleware('isAdmin');
+
+    Route::patch('/blood/requests/{request}/approve', [BloodRequestController::class, 'adminApproveRequest'])
+        ->middleware('isAdmin');
+    Route::patch('/blood/requests/{request}/reject', [BloodRequestController::class, 'adminRejectRequest'])
+        ->middleware('isAdmin');
+    Route::patch('/blood/requests/{request}/cancel', [BloodRequestController::class, 'cancelRequest']);
+    Route::patch('/blood/requests/{request}/complete', [BloodRequestController::class, 'completeRequest']);
 });
 
 Route::get('/sanctum/csrf-cookie', function () {

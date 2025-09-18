@@ -30,6 +30,8 @@ class BloodRequest extends Model
         'blood_bank_id',
         'status',
         'active_status', //active_status means whether the request is active or is fulfilled
+        'status',
+        'verification_status',
         'donated_by',
         'donated_by_user',
         'donated_by_blood_banks',
