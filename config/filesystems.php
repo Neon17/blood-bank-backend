@@ -41,10 +41,24 @@ return [
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => env('APP_URL').'/storage',
+            'url' => env('APP_URL') . '/storage',
             'visibility' => 'public',
             'throw' => false,
             'report' => false,
+        ],
+
+        'donor_photos' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/donor_photos'),
+            'url' => env('APP_URL') . '/donor_photos',
+            'visibility' => 'public',
+        ],
+
+        'user_photos' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/user_photos'),
+            'url' => env('APP_URL') . '/user_photos',
+            'visibility' => 'public',
         ],
 
         's3' => [

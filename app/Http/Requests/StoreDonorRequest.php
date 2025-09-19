@@ -40,6 +40,7 @@ class StoreDonorRequest extends FormRequest
             'medical_conditions' => 'nullable|string',
             'current_medication' => 'nullable|string',
             'current_health_status' => 'required|string',
+            'verification_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
 
             'latitude' => 'required|numeric|between:-90,90',
             'longitude' => 'required|numeric|between:-180,180',

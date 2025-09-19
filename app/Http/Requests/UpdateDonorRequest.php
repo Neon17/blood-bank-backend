@@ -41,6 +41,7 @@ class UpdateDonorRequest extends FormRequest
             'medical_conditions' => 'nullable|string',
             'current_medication' => 'nullable|string',
             'current_health_status' => 'sometimes|string',
+            'verification_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
 
             'latitude' => 'sometimes|numeric|between:-90,90',
             'longitude' => 'sometimes|numeric|between:-180,180',

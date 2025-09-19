@@ -29,7 +29,8 @@ class UserController extends Controller
             'email' => 'required',
             'address' => 'required',
             'blood_group' => 'required|in:A+,A-,O+,O-,B+,B-,AB+,AB-',
-            'dob' => 'required|date'
+            'dob' => 'required|date',
+            'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         // write all editable fields
@@ -47,6 +48,10 @@ class UserController extends Controller
 
         $user->latitude = $request->lat;
         $user->longitude = $request->lng;
+
+        if ($request->hasFile('profile_photo')) {
+            $user->storeUpload($request->file('profile_photo'), 'public');
+        }
 
         $user->update();
         return response()->json([

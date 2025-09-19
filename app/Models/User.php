@@ -5,7 +5,9 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use App\Traits\NearbyScope;
+use App\Traits\Uploadable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -13,7 +15,7 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasApiTokens, HasFactory, Notifiable, NearbyScope;
+    use HasApiTokens, HasFactory, Notifiable, NearbyScope, Uploadable;
 
     /**
      * The attributes that are mass assignable.
@@ -39,6 +41,7 @@ class User extends Authenticatable
         'will_donate',
         'verified_as_donor',
         'last_donated',
+        'profile_photo_id'
     ];
 
     protected function scopeDonors($query) {
@@ -55,6 +58,10 @@ class User extends Authenticatable
 
     public function isAdmin() {
         return $this->role === 'admin';
+    }
+
+    public function profilePhoto(): MorphOne {
+        return $this->morphOne(Upload::class, 'uploadable');
     }
 
     /**

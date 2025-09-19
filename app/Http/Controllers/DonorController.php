@@ -63,6 +63,10 @@ class DonorController extends Controller
         $data = $request->validated();
         $data["user_id"] = $request->user()->id;
 
+        if ($request->hasFile('verification_photo')){
+            $this->storeUpload($request->file('verification_photo'), 'public');
+        }
+
         $donorApplication = Donor::create($data);
 
         return response()->json([
@@ -125,6 +129,10 @@ class DonorController extends Controller
         }
 
         $donorApplication = Donor::find($donor->id);
+        if ($request->hasFile('verification_photo')){
+            $this->storeUpload($request->file('verification_photo'), 'public');
+        }
+
         $donorApplication->update($request->validated());
         return response()->json([
             'status' => 'success',
