@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -12,7 +14,7 @@ class UserController extends Controller
 
     public function index()
     {
-        $user = User::get();
+        $user = User::with('profilePhoto')->get();
 
         return response()->json([
             'status' => 'success',
@@ -54,6 +56,29 @@ class UserController extends Controller
         }
 
         $user->update();
+        return response()->json([
+            'status' => 'success',
+            'data' => $user
+        ], 200, [
+            'Content-Type' => 'text/json'
+        ]);
+    }
+
+    public function updatePhoto(Request $request)
+    {
+        $request->validate([
+            'profile_photo' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        $user = User::find(Auth::id());
+
+        if ($request->hasFile('profile_photo')) {
+            $user->storeUpload($request->file('profile_photo'), 'public');
+        }
+
+        $user->update();
+        $user->refresh()->with('profilePhoto');
+
         return response()->json([
             'status' => 'success',
             'data' => $user
@@ -138,7 +163,9 @@ class UserController extends Controller
 
     public function profile()
     {
-        //we have to test this
-        return response()->json(Auth::user(), 200);
+        $user = User::where('id', Auth::id())->with('profilePhoto')->first();
+
+        $formatted_user = new UserResource( $user );
+        return response()->json($formatted_user, 200);
     }
 }

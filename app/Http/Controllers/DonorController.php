@@ -25,8 +25,7 @@ class DonorController extends Controller
 
         if ($blood_group) {
             $donorApplication = Donor::with('user')->where('blood_group', $blood_group)->nearby($latitude, $longitude, $radius)->get();
-        }  
-        else {
+        } else {
             $donorApplication = Donor::with('user')->nearby($latitude, $longitude, $radius)->get();
         }
 
@@ -47,7 +46,8 @@ class DonorController extends Controller
         ], 200);
     }
 
-    public function me() {
+    public function me()
+    {
         $donorApplication = Donor::where('user_id', Auth::id())->get();
         return response()->json([
             'status' => 'success',
@@ -63,11 +63,13 @@ class DonorController extends Controller
         $data = $request->validated();
         $data["user_id"] = $request->user()->id;
 
-        if ($request->hasFile('verification_photo')){
-            $this->storeUpload($request->file('verification_photo'), 'public');
-        }
 
         $donorApplication = Donor::create($data);
+        if ($request->hasFile('verification_photo')) {
+            $donorApplication->storeUpload($request->file('verification_photo'), 'public');
+        }
+
+        $donorApplication->refresh();
 
         return response()->json([
             'status' => 'success',
@@ -129,14 +131,36 @@ class DonorController extends Controller
         }
 
         $donorApplication = Donor::find($donor->id);
-        if ($request->hasFile('verification_photo')){
-            $this->storeUpload($request->file('verification_photo'), 'public');
+        if ($request->hasFile('verification_photo')) {
+            $donorApplication->storeUpload($request->file('verification_photo'), 'public');
         }
 
         $donorApplication->update($request->validated());
         return response()->json([
             'status' => 'success',
             'data' => $donorApplication
+        ], 200, [
+            'Content-Type' => 'text/json'
+        ]);
+    }
+
+    public function updatePhoto(Request $request)
+    {
+        $request->validate([
+            'profile_photo' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        $donor = Donor::find(Auth::id());
+
+        if ($request->hasFile('profile_photo')) {
+            $donor->storeUpload($request->file('profile_photo'), 'public');
+        }
+
+        $donor->update();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $donor
         ], 200, [
             'Content-Type' => 'text/json'
         ]);
@@ -164,7 +188,7 @@ class DonorController extends Controller
 
         $updatedDonor = Donor::where('id', $donor->id)->update([
             'verification_status' => $data['status'],
-            'admin_message' => $data['message']??null
+            'admin_message' => $data['message'] ?? null
         ]);
 
         return response()->json([

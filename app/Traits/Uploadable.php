@@ -4,6 +4,7 @@ namespace App\Traits;
 
 use App\Models\Upload;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 

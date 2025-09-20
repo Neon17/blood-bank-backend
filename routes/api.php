@@ -1,15 +1,12 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BloodRequestController;
 use App\Http\Controllers\DonorController;
 use App\Http\Controllers\UserController;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+Route::get('/user', [UserController::class, 'profile'])->middleware('auth:sanctum');
 
 Route::get('/test', [UserController::class, 'test']);
 
@@ -49,6 +46,11 @@ Route::get('/donors', [UserController::class, 'donors'])->middleware('optionalSa
 Route::post('/blood/requests/{id}/finish', [BloodRequestController::class, 'finish'])->middleware('auth:sanctum');
 
 Route::get('/users', [UserController::class, 'index'])->middleware(['auth:sanctum', 'isAdmin']);
+
+// logged in user photo update for profile and donor profile
+Route::patch('/profile/photo/update', [UserController::class, 'updatePhoto'])->middleware('auth:sanctum');
+Route::patch('/donor/photo/update', [UserController::class, 'updatePhoto'])->middleware('auth:sanctum');
+
 
 Route::middleware('optionalSanctum')->group(function () {
     Route::get('/blood/donors', [DonorController::class, 'index']); // Public
