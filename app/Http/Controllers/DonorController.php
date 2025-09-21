@@ -61,9 +61,18 @@ class DonorController extends Controller
     public function store(StoreDonorRequest $request)
     {
         $data = $request->validated();
+
+        $donor = Donor::where('user_id', Auth::id())->first();
+
+        if ($donor) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => 'You have already submitted a Donor Application'
+            ], 403);
+        }
+
         $data["user_id"] = $request->user()->id;
-
-
+        
         $donorApplication = Donor::create($data);
         if ($request->hasFile('verification_photo')) {
             $donorApplication->storeUpload($request->file('verification_photo'), 'public');

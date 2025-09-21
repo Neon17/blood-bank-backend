@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\NearbyScope;
+use App\Traits\Uploadable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -10,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 class BloodRequest extends Model
 {
     //
-    use NearbyScope, HasFactory;
+    use NearbyScope, HasFactory, Uploadable;
 
     protected $table = 'blood_requests';
 
@@ -52,5 +53,10 @@ class BloodRequest extends Model
     public function bloodBank()
     {
         return $this->belongsTo(BloodBank::class);
+    }
+
+    public function verificationPhoto()
+    {
+        return $this->morphOne(Upload::class, 'uploadable');
     }
 }

@@ -25,9 +25,9 @@ class BloodRequestController extends Controller
             $radiusInKm = request('radiusInKm') ?? null;
 
             if ($radiusInKm)
-                $bloodRequest = BloodRequest::with('user', 'bloodBank')->nearby($latitude, $longitude, $radiusInKm)->get();
+                $bloodRequest = BloodRequest::with('user', 'bloodBank')->nearby($latitude, $longitude, $radiusInKm)->with('verificationPhoto')->get();
             else
-                $bloodRequest = BloodRequest::with('user', 'bloodBank')->get();
+                $bloodRequest = BloodRequest::with('user', 'bloodBank')->with('verificationPhoto')->get();
         } else
             $bloodRequest = BloodRequest::with('user', 'bloodBank')->get();
 
@@ -38,7 +38,7 @@ class BloodRequestController extends Controller
     }
 
     public function yourRequests() {
-        $bloodRequests = BloodRequest::where('user_id', Auth::user()->id)->with('user', 'bloodBank')->get();
+        $bloodRequests = BloodRequest::where('user_id', Auth::user()->id)->with('user', 'bloodBank', 'verificationPhoto')->get();
         return response()->json([
             'status' => 'success',
             'data' => $bloodRequests
@@ -46,7 +46,7 @@ class BloodRequestController extends Controller
     }
 
     public function allRequests() {
-        $bloodRequests = BloodRequest::withoutGlobalScope('active')->with('user', 'bloodBank')->get();
+        $bloodRequests = BloodRequest::withoutGlobalScope('active')->with('user', 'bloodBank', 'verificationPhoto')->get();
         return response()->json([
             'status' => 'success',
             'data' => $bloodRequests
@@ -76,6 +76,7 @@ class BloodRequestController extends Controller
             'country' => 'required',
             'latitude' => 'required|numeric|between:-90,90',
             'longitude' => 'required|numeric|between:-180,180',
+            'verification_photo' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
         ]);
 
         $bloodRequest = new BloodRequest();
@@ -93,6 +94,12 @@ class BloodRequestController extends Controller
         $bloodRequest->state = $request->state;
         $bloodRequest->user_id = $user_id;
         $bloodRequest->save();
+
+        if ($request->hasFile('verification_photo')) {
+            $bloodRequest->storeUpload($request->file('verification_photo'), 'public');
+        }
+
+        $bloodRequest->refresh();
 
         return response()->json([
             'status' => 'success',
@@ -163,9 +170,10 @@ class BloodRequestController extends Controller
 
     public function edit(BloodRequest $bloodRequest)
     {
+        $blood_request = BloodRequest::where('id',$bloodRequest->id)->with('verificationPhoto')->first();
         return response()->json([
             'status' => 'success',
-            'data' => $bloodRequest
+            'data' => $blood_request
         ]);
     }
 
@@ -179,10 +187,15 @@ class BloodRequestController extends Controller
             'exact_location' => 'required',
             'contact_number' => 'required',
             'city' => 'required',
-            'country' => 'required'
+            'country' => 'required',
+            'verification_photo' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
         ]);
 
         $bloodRequest->update($request->all());
+
+        if ($request->hasFile('verification_photo')) {
+            $bloodRequest->storeUpload($request->file('verification_photo'), 'public');
+        }
         return response()->json([
             'status' => 'success',
             'data' => $bloodRequest
