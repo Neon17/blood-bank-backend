@@ -33,7 +33,7 @@ class UserResource extends JsonResource
             'profile_photo_id' => $this->profile_photo_id,
 
             'profilePhoto' => [
-                'id' => $this->profilePhoto->id ? $this->profilePhoto->id : null,
+                'id' => $this->profilePhoto ? $this->profilePhoto->id : null,
                 'name' => $this->profilePhoto ? $this->profilePhoto->name : null,
                 'path' => $this->profilePhoto ? $this->profilePhoto->path : null,
                 'url' => $this->profilePhoto ? $this->getUploadUrl() : null,

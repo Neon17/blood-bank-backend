@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Models\Scopes\LastDonatedScope;
 use App\Traits\NearbyScope;
 use App\Traits\Uploadable;
+use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 
+#[ScopedBy(LastDonatedScope::class)]
 class Donor extends Model
 {
     use NearbyScope, HasFactory, Uploadable;

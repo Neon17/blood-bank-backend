@@ -4,13 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreDonorRequest;
 use App\Http\Requests\UpdateDonorRequest;
+use App\Http\Resources\DonorResource;
 use App\Models\Donor;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-
-use function Laravel\Prompts\select;
 
 class DonorController extends Controller
 {
@@ -32,7 +30,7 @@ class DonorController extends Controller
         return response()->json([
             'status' => 'success',
             'total' => count($donorApplication),
-            'data' => $donorApplication
+            'data' => DonorResource::collection($donorApplication)
         ], 200, [
             'Content-Type' => 'text/json'
         ]);
