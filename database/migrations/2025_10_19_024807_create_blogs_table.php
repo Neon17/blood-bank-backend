@@ -25,8 +25,7 @@ return new class extends Migration
 
             $table->json('references')->nullable();
 
-            $table->foreignId('created_by')->constrained('users')->nullOnDelete();
-            $table->nullableMorphs('bloggable');
+            $table->foreignId('created_by')->constrained('users')->nullOnDelete(); // we can determine admin/blood_bank/user by users.userable type
             $table->timestamps();
         });
     }

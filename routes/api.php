@@ -2,7 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BlogController;
 use App\Http\Controllers\BloodRequestController;
+use App\Http\Controllers\DonationProgramController;
 use App\Http\Controllers\DonorController;
 use App\Http\Controllers\UserController;
 
@@ -54,6 +56,22 @@ Route::patch('/donor/photo/update', [UserController::class, 'updatePhoto'])->mid
 
 Route::middleware('optionalSanctum')->group(function () {
     Route::get('/blood/donors', [DonorController::class, 'index']); // Public
+});
+
+Route::prefix('/blogs')->middleware('optionalSanctum')->group(function () {
+    Route::get('/', [BlogController::class, 'index']);
+    Route::get('/{id}', [BlogController::class, 'show']);
+    Route::post('/', [BlogController::class, 'store'])->middleware('auth:sanctum', 'isAdmin');
+    Route::put('/{id}', [BlogController::class, 'update'])->middleware('auth:sanctum', 'isAdmin');
+    Route::delete('/{id}', [BlogController::class, 'destroy'])->middleware('auth:sanctum', 'isAdmin');
+});
+
+Route::prefix('/donation-programs')->middleware('optionalSanctum')->group(function () {
+    Route::get('/', [DonationProgramController::class, 'index']);
+    Route::get('/{id}', [DonationProgramController::class, 'show']);
+    Route::post('/', [DonationProgramController::class, 'store'])->middleware('auth:sanctum', 'isAdmin');
+    Route::put('/{id}', [DonationProgramController::class, 'update'])->middleware('auth:sanctum', 'isAdmin');
+    Route::delete('/{id}', [DonationProgramController::class, 'destroy'])->middleware('auth:sanctum', 'isAdmin');
 });
 
 // Group for authenticated users

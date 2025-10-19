@@ -20,10 +20,6 @@ class Blog extends Model
         'created_by',
     ];
 
-    public function bloggable(): MorphTo {
-        return $this->morphTo();
-    }
-
     public function createdBy() {
         return $this->belongsTo(User::class, 'created_by');
     }

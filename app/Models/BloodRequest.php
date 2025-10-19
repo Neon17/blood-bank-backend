@@ -45,6 +45,16 @@ class BloodRequest extends Model
         });
     }
 
+    public function setLatitudeAttribute($value)
+    {
+        $this->attributes['latitude'] = round($value, 8);
+    }
+
+    public function setLongitudeAttribute($value)
+    {
+        $this->attributes['longitude'] = round($value, 8);
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);

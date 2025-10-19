@@ -16,8 +16,6 @@ class BloodRequestController extends Controller
         // I have to sort in the order of nearest requests based on logged in user
         // If that users' location is null, then all requests are shown
         // If request has no query parameter (radiusInKm), then all requests are shown
-
-        info("blood requests index hit");
         if (Auth::check()) {
             $latitude = Auth::user()->latitude;
             $longitude = Auth::user()->longitude;
@@ -66,7 +64,7 @@ class BloodRequestController extends Controller
             ], 404);
         }
 
-        $request->validate([
+        $validated = $request->validate([
             'blood_type' => 'required',
             'quantity' => 'required|numeric|min:1',
             'date_time' => 'required|date',
@@ -79,21 +77,8 @@ class BloodRequestController extends Controller
             'verification_photo' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
         ]);
 
-        $bloodRequest = new BloodRequest();
-        $bloodRequest->blood_type = $request->blood_type;
-        $bloodRequest->quantity = $request->quantity;
-        $bloodRequest->date_time = $request->date_time;
-        $bloodRequest->exact_location = $request->exact_location;
-
-        // Trim and round the decimal places before assigning
-        $bloodRequest->latitude = round($request->latitude, 8);
-        $bloodRequest->longitude = round($request->longitude, 8);
-
-        $bloodRequest->contact_number = $request->contact_number;
-        $bloodRequest->city = $request->city;
-        $bloodRequest->state = $request->state;
-        $bloodRequest->user_id = $user_id;
-        $bloodRequest->save();
+        $validated['user_id'] = $user_id;
+        $bloodRequest = BloodRequest::create($validated);
 
         if ($request->hasFile('verification_photo')) {
             $bloodRequest->storeUpload($request->file('verification_photo'), 'public');
@@ -170,6 +155,7 @@ class BloodRequestController extends Controller
 
     public function edit(BloodRequest $bloodRequest)
     {
+        // This is to check the blood request details and permission for editing
         $blood_request = BloodRequest::where('id',$bloodRequest->id)->with('verificationPhoto')->first();
         return response()->json([
             'status' => 'success',
@@ -180,7 +166,7 @@ class BloodRequestController extends Controller
     public function update(Request $request, $id)
     {
         $bloodRequest = BloodRequest::find($id);
-        $request->validate([
+        $validated = $request->validate([
             'blood_type' => 'required',
             'quantity' => 'required',
             'date_time' => 'required',
@@ -191,7 +177,7 @@ class BloodRequestController extends Controller
             'verification_photo' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
         ]);
 
-        $bloodRequest->update($request->all());
+        $bloodRequest->update($validated);
 
         if ($request->hasFile('verification_photo')) {
             $bloodRequest->storeUpload($request->file('verification_photo'), 'public');
