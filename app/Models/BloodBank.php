@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class BloodBank extends Model
 {
@@ -16,5 +17,9 @@ class BloodBank extends Model
 
     public function bloodRequests() {
         return $this->hasMany(BloodRequest::class);
+    }
+
+    public function user(): MorphOne {
+        return $this->morphOne(User::class, 'userable');
     }
 }

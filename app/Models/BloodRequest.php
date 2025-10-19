@@ -59,4 +59,9 @@ class BloodRequest extends Model
     {
         return $this->morphOne(Upload::class, 'uploadable');
     }
+
+    public function visibility()
+    {
+        return $this->morphOne(Visibility::class, 'visible');
+    }
 }

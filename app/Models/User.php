@@ -8,6 +8,7 @@ use App\Traits\NearbyScope;
 use App\Traits\Uploadable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -62,6 +63,10 @@ class User extends Authenticatable
 
     public function profilePhoto(): MorphOne {
         return $this->morphOne(Upload::class, 'uploadable');
+    }
+
+    public function userable(): MorphTo {
+        return $this->morphTo('userable');
     }
 
     /**
