@@ -41,7 +41,7 @@ return new class extends Migration
             $table->boolean('is_featured')->default(false);
             $table->boolean('is_urgent')->default(false);
 
-            $table->foreignId('user_id')->constrained('users')->nullOnDelete()->nullable();
+            $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
 
             $table->string('organizer')->nullable();
 

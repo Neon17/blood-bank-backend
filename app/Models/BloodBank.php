@@ -19,6 +19,10 @@ class BloodBank extends Model
         return $this->hasMany(BloodRequest::class);
     }
 
+    public function donationPrograms() {
+        return $this->hasMany(DonationProgram::class);
+    }
+
     public function user(): MorphOne {
         return $this->morphOne(User::class, 'userable');
     }

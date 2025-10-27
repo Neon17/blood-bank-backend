@@ -22,6 +22,10 @@ class DonationProgram extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
+    public function bloodBank() {
+        return $this->belongsTo(BloodBank::class);
+    }
+
     public function visibility(): MorphOne
     {
         return $this->morphOne(Visibility::class, 'visible');

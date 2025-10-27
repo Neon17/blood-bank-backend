@@ -25,7 +25,7 @@ return new class extends Migration
             $table->decimal('longitude', 11, 8)->nullable();
             $table->integer('radius')->default(10)->nullable();
 
-            $table->foreignId('created_by')->constrained('users')->nullOnDelete()->nullable();
+            $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->nullableMorphs('visible');
 
             $table->timestamps();

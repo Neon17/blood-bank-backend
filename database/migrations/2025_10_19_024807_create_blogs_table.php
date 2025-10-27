@@ -25,7 +25,7 @@ return new class extends Migration
 
             $table->json('references')->nullable();
 
-            $table->foreignId('created_by')->constrained('users')->nullOnDelete(); // we can determine admin/blood_bank/user by users.userable type
+            $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete(); // we can determine admin/blood_bank/user by users.userable type
             $table->timestamps();
         });
     }
