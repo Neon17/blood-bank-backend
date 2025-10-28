@@ -44,7 +44,7 @@ class BloodRequestController extends Controller
     }
 
     public function allRequests() {
-        $bloodRequests = BloodRequest::withoutGlobalScope('active')->with('user', 'bloodBank', 'verificationPhoto')->get();
+        $bloodRequests = BloodRequest::withoutGlobalScope('active')->with('user', 'bloodBank', 'verificationPhoto')->paginate(30);
         return response()->json([
             'status' => 'success',
             'data' => $bloodRequests

@@ -19,21 +19,34 @@ class DonorController extends Controller
         $radius = $request->query('radius');
         $latitude = $request->query('latitude');
         $longitude = $request->query('longitude');
-        $donorApplication = null;
+
+        $query = Donor::with(['user', 'user.profilePhoto'])
+            ->nearby($latitude, $longitude, $radius);
 
         if ($blood_group) {
-            $donorApplication = Donor::with('user')->where('blood_group', $blood_group)->nearby($latitude, $longitude, $radius)->get();
-        } else {
-            $donorApplication = Donor::with('user')->nearby($latitude, $longitude, $radius)->get();
+            $query->where('blood_group', $blood_group);
         }
+
+        $donors = $query->paginate(30);
 
         return response()->json([
             'status' => 'success',
-            'total' => count($donorApplication),
-            'data' => DonorResource::collection($donorApplication)
-        ], 200, [
-            'Content-Type' => 'text/json'
-        ]);
+            'data' => [
+                'current_page' => $donors->currentPage(),
+                'data' => DonorResource::collection($donors->items()),
+                'first_page_url' => $donors->url(1),
+                'from' => $donors->firstItem(),
+                'last_page' => $donors->lastPage(),
+                'last_page_url' => $donors->url($donors->lastPage()),
+                'links' => $donors->linkCollection()->toArray(),
+                'next_page_url' => $donors->nextPageUrl(),
+                'path' => $donors->path(),
+                'per_page' => $donors->perPage(),
+                'prev_page_url' => $donors->previousPageUrl(),
+                'to' => $donors->lastItem(),
+                'total' => $donors->total(),
+            ]
+        ], 200);
     }
 
     public function show(Donor $donor)
@@ -70,7 +83,7 @@ class DonorController extends Controller
         }
 
         $data["user_id"] = $request->user()->id;
-        
+
         $donorApplication = Donor::create($data);
         if ($request->hasFile('verification_photo')) {
             $donorApplication->storeUpload($request->file('verification_photo'), 'public');

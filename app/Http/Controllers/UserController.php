@@ -17,7 +17,7 @@ class UserController extends Controller
         // How to make User as Admin, creating entry in admin table and linking it to user
         
         $this->authorize('viewAny', Auth::user());
-        $user = User::with('profilePhoto')->get();
+        $user = User::with('profilePhoto')->paginate(30);
 
         return response()->json([
             'status' => 'success',
