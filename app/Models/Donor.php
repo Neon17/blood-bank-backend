@@ -19,7 +19,7 @@ class Donor extends Model
         'id',
         'user_id',
         'contact_number',
-        'blood_type',
+        'blood_group',
         'address',
         'date_of_birth',
 

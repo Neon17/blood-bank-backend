@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Middleware\IsAdmin;
 use App\Http\Middleware\OptionalSanctum;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Application;
@@ -21,7 +20,6 @@ return Application::configure(basePath: dirname(__DIR__))
         //
         $middleware->alias([
             'optionalSanctum' => OptionalSanctum::class,
-            'isAdmin' => IsAdmin::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

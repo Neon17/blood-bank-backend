@@ -28,7 +28,6 @@ class User extends Authenticatable
         'email',
         'email_verified_at',
         'address',
-        'role',
         'dob',
         'phone_number',
         'password',
@@ -42,30 +41,60 @@ class User extends Authenticatable
         'will_donate',
         'verified_as_donor',
         'last_donated',
-        'profile_photo_id'
+        'profile_photo_id',
+
+        'userable_id',
+        'userable_type'
     ];
 
-    protected function scopeDonors($query) {
+    protected function scopeDonors($query)
+    {
         return $query->where('will_donate', true);
     }
 
-    public function bloodRequests() {
+    public function bloodRequests()
+    {
         return $this->hasMany(BloodRequest::class);
     }
 
-    public function donorApplication() {
+    public function donorApplication()
+    {
         return $this->hasOne(Donor::class);
     }
 
-    public function isAdmin() {
-        return $this->role === 'admin';
+    public function isAdmin()
+    {
+        return $this->userable_type === Admin::class;
     }
 
-    public function profilePhoto(): MorphOne {
+    public function isBloodBank()
+    {
+        return $this->userable_type === BloodBank::class;
+    }
+
+    public function isRegularUser()
+    {
+        return $this->userable_type === null;
+    }
+
+    public function getRoleAttribute()
+    {
+        if ($this->isAdmin()) {
+            return 'admin';
+        }
+        if ($this->isBloodBank()) {
+            return 'blood_bank';
+        }
+        return 'user';
+    }
+
+    public function profilePhoto(): MorphOne
+    {
         return $this->morphOne(Upload::class, 'uploadable');
     }
 
-    public function userable(): MorphTo {
+    public function userable(): MorphTo
+    {
         return $this->morphTo('userable');
     }
 

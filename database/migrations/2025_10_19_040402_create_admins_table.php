@@ -13,14 +13,9 @@ return new class extends Migration
     {
         Schema::create('admins', function (Blueprint $table) {
             $table->id();
-
             $table->string('role'); // e.g., super_admin, moderator, etc
             $table->json('permissions')->nullable();
-
-            $table->string('status')->enum(['active', 'inactive', 'pending'], 'active');
-
-            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
-
+            $table->string('status')->default('active');
             $table->timestamps();
         });
     }

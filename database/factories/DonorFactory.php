@@ -9,7 +9,7 @@ class DonorFactory extends Factory
     protected $model = \App\Models\Donor::class;
 
     private const BLOOD_TYPES = ['A+', 'A-', 'O+', 'O-', 'B+', 'B-', 'AB+', 'AB-'];
-    private const VERIFICATION_STATUSES = ['pending', 'approved', 'wrong'];
+    private const VERIFICATION_STATUSES = ['pending', 'approved', 'rejected'];
 
     // Major cities with weights for urban-focused generation
     private const MAJOR_CITIES = [
@@ -50,20 +50,49 @@ class DonorFactory extends Factory
         return [
             'user_id' => null, // assign via ->for(User) in seeder
             'contact_number' => '98' . fake()->randomNumber(8, true),
-            'blood_type' => fake()->randomElement(self::BLOOD_TYPES),
+            'blood_group' => fake()->randomElement(self::BLOOD_TYPES),
             'address' => fake()->streetAddress() . ($cityName ? ", $cityName" : "") . ', Nepal',
-            'date_of_birth' => fake()->dateTimeBetween('-90 years', '-10 years')->format('Y-m-d'),
+            'date_of_birth' => fake()->dateTimeBetween('-90 years', '-18 years')->format('Y-m-d'), // Changed to -18 years minimum
             'weight' => fake()->randomFloat(2, 45, 100),
             'height' => fake()->randomFloat(2, 150, 200),
             'last_donated_date' => fake()->dateTimeBetween('2000-01-01', 'now')->format('Y-m-d'),
-            'medical_conditions' => fake()->sentence(),
-            'current_medication' => fake()->sentence(),
-            'current_health_status' => fake()->sentence(),
+            'medical_conditions' => fake()->boolean(70) ? fake()->sentence() : null, // 70% chance to have medical conditions
+            'current_medication' => fake()->boolean(30) ? fake()->sentence() : null, // 30% chance to be on medication
+            'current_health_status' => fake()->randomElement(['Excellent', 'Good', 'Fair', 'Poor']),
             'latitude' => $latitude,
             'longitude' => $longitude,
-            'verification_status' => fake()->optional()->randomElement(self::VERIFICATION_STATUSES),
-            'admin_message' => fake()->optional()->sentence(),
+            'verification_status' => fake()->randomElement(self::VERIFICATION_STATUSES), // Removed optional() to always have a status
+            'admin_message' => fake()->boolean(20) ? fake()->sentence() : null, // 20% chance to have admin message
             'city' => $cityName,
         ];
+    }
+
+    // Optional: Add states for specific verification statuses
+    public function pending()
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'verification_status' => 'pending',
+            ];
+        });
+    }
+
+    public function approved()
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'verification_status' => 'approved',
+            ];
+        });
+    }
+
+    public function rejected()
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'verification_status' => 'rejected',
+                'admin_message' => fake()->sentence(), // Usually rejected donors have an admin message
+            ];
+        });
     }
 }

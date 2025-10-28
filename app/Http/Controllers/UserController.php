@@ -10,10 +10,13 @@ use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
-    // all CRUD operations for User
 
     public function index()
     {
+
+        // How to make User as Admin, creating entry in admin table and linking it to user
+        
+        $this->authorize('viewAny', Auth::user());
         $user = User::with('profilePhoto')->get();
 
         return response()->json([

@@ -34,7 +34,7 @@ Route::post('/blood/requests', [BloodRequestController::class, 'store'])->middle
 
 // Only admin can see all requests active, inactive or scam
 Route::get('/blood/requests/all', [BloodRequestController::class, 'allRequests'])
-    ->middleware(['auth:sanctum', 'isAdmin']);
+    ->middleware(['auth:sanctum', ]);
 
 Route::get('/blood/requests/yours', [BloodRequestController::class, 'yours'])->middleware('auth:sanctum');
 
@@ -47,7 +47,7 @@ Route::delete('/blood/requests/{id}', [BloodRequestController::class, 'destroy']
 Route::get('/donors', [UserController::class, 'donors'])->middleware('optionalSanctum');
 Route::post('/blood/requests/{id}/finish', [BloodRequestController::class, 'finish'])->middleware('auth:sanctum');
 
-Route::get('/users', [UserController::class, 'index'])->middleware(['auth:sanctum', 'isAdmin']);
+Route::get('/users', [UserController::class, 'index'])->middleware(['auth:sanctum']);
 
 // logged in user photo update for profile and donor profile
 Route::patch('/profile/photo/update', [UserController::class, 'updatePhoto'])->middleware('auth:sanctum');
@@ -60,18 +60,18 @@ Route::middleware('optionalSanctum')->group(function () {
 
 Route::prefix('/blogs')->middleware('optionalSanctum')->group(function () {
     Route::get('/', [BlogController::class, 'index']);
-    Route::get('/{id}', [BlogController::class, 'show']);
-    Route::post('/', [BlogController::class, 'store'])->middleware('auth:sanctum', 'isAdmin');
-    Route::put('/{id}', [BlogController::class, 'update'])->middleware('auth:sanctum', 'isAdmin');
-    Route::delete('/{id}', [BlogController::class, 'destroy'])->middleware('auth:sanctum', 'isAdmin');
+    Route::get('/{blog}', [BlogController::class, 'show'])->can('view', 'blog');
+    Route::post('/', [BlogController::class, 'store'])->middleware('auth:sanctum', 'can:create,App\Models\Blog' );
+    Route::put('/{blog}', [BlogController::class, 'update'])->middleware('auth:sanctum', )->can('update', 'blog');
+    Route::delete('/{blog}', [BlogController::class, 'destroy'])->middleware('auth:sanctum', 'can:delete,blog');
 });
 
 Route::prefix('/donation-programs')->middleware('optionalSanctum')->group(function () {
     Route::get('/', [DonationProgramController::class, 'index']);
     Route::get('/{id}', [DonationProgramController::class, 'show']);
-    Route::post('/', [DonationProgramController::class, 'store'])->middleware('auth:sanctum', 'isAdmin');
-    Route::put('/{id}', [DonationProgramController::class, 'update'])->middleware('auth:sanctum', 'isAdmin');
-    Route::delete('/{id}', [DonationProgramController::class, 'destroy'])->middleware('auth:sanctum', 'isAdmin');
+    Route::post('/', [DonationProgramController::class, 'store'])->middleware('auth:sanctum', );
+    Route::put('/{id}', [DonationProgramController::class, 'update'])->middleware('auth:sanctum', );
+    Route::delete('/{id}', [DonationProgramController::class, 'destroy'])->middleware('auth:sanctum', );
 });
 
 // Group for authenticated users
@@ -86,12 +86,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Only admin can change verification status
     Route::patch('/blood/donors/{donor}/status', [DonorController::class, 'changeStatus'])
-        ->middleware('isAdmin');
+        ->middleware();
 
     Route::patch('/blood/requests/{request}/approve', [BloodRequestController::class, 'adminApproveRequest'])
-        ->middleware('isAdmin');
+        ->middleware();
     Route::patch('/blood/requests/{request}/reject', [BloodRequestController::class, 'adminRejectRequest'])
-        ->middleware('isAdmin');
+        ->middleware();
     Route::patch('/blood/requests/{request}/cancel', [BloodRequestController::class, 'cancelRequest']);
     Route::patch('/blood/requests/{request}/complete', [BloodRequestController::class, 'completeRequest']);
 });

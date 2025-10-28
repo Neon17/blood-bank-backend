@@ -10,7 +10,6 @@ class UserFactory extends Factory
     protected $model = \App\Models\User::class;
 
     private const BLOOD_GROUPS = ['A+', 'A-', 'O+', 'O-', 'B+', 'B-', 'AB+', 'AB-'];
-    private const ROLES = ['admin', 'user'];
 
     private const MAJOR_CITIES = [
         ['city' => 'Kathmandu', 'lat' => 27.7172, 'lng' => 85.3240, 'weight' => 0.3],
@@ -50,7 +49,6 @@ class UserFactory extends Factory
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'address' => fake()->streetAddress() . ($cityName ? ", $cityName" : "") . ', Nepal',
-            'role' => fake()->randomElement(self::ROLES),
             'dob' => fake()->dateTimeBetween('-90 years', '-10 years')->format('Y-m-d'),
             'phone_number' => '98' . fake()->randomNumber(8, true),
             'city' => $cityName,
@@ -64,5 +62,27 @@ class UserFactory extends Factory
             'last_donated' => fake()->dateTimeBetween('2000-01-01', 'now')->format('Y-m-d'),
             'password' => Hash::make('password'),
         ];
+    }
+
+    // State for admin users
+    public function admin(): Factory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'name' => 'Admin ' . fake()->name(),
+                'email' => 'admin.' . fake()->unique()->safeEmail(),
+            ];
+        });
+    }
+
+    // State for blood bank users
+    public function bloodBank(): Factory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'name' => fake()->company() . ' Blood Bank',
+                'email' => 'bloodbank.' . fake()->unique()->safeEmail(),
+            ];
+        });
     }
 }
