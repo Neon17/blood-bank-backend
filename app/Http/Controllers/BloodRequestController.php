@@ -10,8 +10,34 @@ use Illuminate\Support\Facades\Auth;
 class BloodRequestController extends Controller
 {
     //
+    public function getResults(Request $request, $query)
+    {
+        info($request->all());
+        $search = $request->input('search', null);
+        $willing = $request->input('willing', null);
+        $status = $request->input('verification_status', null);
+        $history = $request->input('donation_history', null);
+        $last_donated = $request->input('last_donated', null);
+        $blood_type = $request->input('blood_type', null);
 
-    public function index()
+        if ($search) {
+            $query = $query->whereAny(['exact_location', 'contact_number', 'city'], 'LIKE', '%' . $search . '%');
+        }
+
+        if ($willing) {
+            $query = $query->where('will_donate', $willing);
+        }
+        if ($blood_type) {
+            $query = $query->where('blood_type', $blood_type);
+        }
+        if ($status) {
+            $query = $query->where('verification_status', $status);
+        }
+
+        return $query;
+    }
+
+    public function index(Request $request)
     {
         // I have to sort in the order of nearest requests based on logged in user
         // If that users' location is null, then all requests are shown
@@ -23,11 +49,13 @@ class BloodRequestController extends Controller
             $radiusInKm = request('radiusInKm') ?? null;
 
             if ($radiusInKm)
-                $bloodRequest = BloodRequest::with('user', 'bloodBank')->nearby($latitude, $longitude, $radiusInKm)->with('verificationPhoto')->get();
+                $bloodRequest = BloodRequest::with('user', 'bloodBank')->nearby($latitude, $longitude, $radiusInKm)->with('verificationPhoto');
             else
-                $bloodRequest = BloodRequest::with('user', 'bloodBank')->with('verificationPhoto')->get();
+                $bloodRequest = BloodRequest::with('user', 'bloodBank')->with('verificationPhoto');
         } else
-            $bloodRequest = BloodRequest::with('user', 'bloodBank')->get();
+            $bloodRequest = BloodRequest::with('user', 'bloodBank');
+
+        $bloodRequest = $this->getResults($request, $bloodRequest)->paginate(30);
 
         return response()->json([
             'status' => 'success',
@@ -35,7 +63,8 @@ class BloodRequestController extends Controller
         ]);
     }
 
-    public function yourRequests() {
+    public function yourRequests()
+    {
         $bloodRequests = BloodRequest::where('user_id', Auth::user()->id)->with('user', 'bloodBank', 'verificationPhoto')->get();
         return response()->json([
             'status' => 'success',
@@ -43,12 +72,14 @@ class BloodRequestController extends Controller
         ]);
     }
 
-    public function allRequests() {
-        $bloodRequests = BloodRequest::withoutGlobalScope('active')->with('user', 'bloodBank', 'verificationPhoto')->paginate(30);
+    public function allRequests(Request $request)
+    {
+        $bloodRequests = BloodRequest::withoutGlobalScope('active')->with('user', 'bloodBank', 'verificationPhoto');
+        $bloodRequests = $this->getResults($request, $bloodRequests)->paginate(30);
         return response()->json([
             'status' => 'success',
             'data' => $bloodRequests
-        ]); 
+        ]);
     }
 
     public function store(Request $request)
@@ -104,7 +135,8 @@ class BloodRequestController extends Controller
         ]);
     }
 
-    public function adminApproveRequest($id){
+    public function adminApproveRequest($id)
+    {
         // Admin approves the request as legal and verified not scam
         $request = BloodRequest::find($id);
         $request->active_status = true;
@@ -116,7 +148,8 @@ class BloodRequestController extends Controller
         ]);
     }
 
-    public function adminRejectRequest($id) {
+    public function adminRejectRequest($id)
+    {
         // Admin can reject the request if found suspicious and not legal
         $request = BloodRequest::find($id);
         $request->active_status = false;
@@ -128,7 +161,8 @@ class BloodRequestController extends Controller
         ]);
     }
 
-    public function cancelRequest($id) {
+    public function cancelRequest($id)
+    {
         // User can cancel the request saying it wasn't necessary
         $request = BloodRequest::find($id);
         $request->active_status = false;
@@ -140,7 +174,8 @@ class BloodRequestController extends Controller
         ]);
     }
 
-    public function completeRequest($id) {
+    public function completeRequest($id)
+    {
         // User can complete the request saying it was necessary
         $request = BloodRequest::find($id);
         $request->active_status = false;
@@ -156,7 +191,7 @@ class BloodRequestController extends Controller
     public function edit(BloodRequest $bloodRequest)
     {
         // This is to check the blood request details and permission for editing
-        $blood_request = BloodRequest::where('id',$bloodRequest->id)->with('verificationPhoto')->first();
+        $blood_request = BloodRequest::where('id', $bloodRequest->id)->with('verificationPhoto')->first();
         return response()->json([
             'status' => 'success',
             'data' => $blood_request

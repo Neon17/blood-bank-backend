@@ -19,9 +19,19 @@ class DonorController extends Controller
         $radius = $request->query('radius');
         $latitude = $request->query('latitude');
         $longitude = $request->query('longitude');
+        $search = $request->query('search', null);
 
-        $query = Donor::with(['user', 'user.profilePhoto'])
-            ->nearby($latitude, $longitude, $radius);
+        if ($radius >0 && $latitude && $longitude) {
+            $query = Donor::with(['user', 'user.profilePhoto'])
+                ->nearby($latitude, $longitude, $radius);
+        } else {
+            $query = Donor::with(['user', 'user.profilePhoto']);
+        }
+
+        if ($search) {
+            $query->whereAny(['contact_number', 'address'], 'LIKE', '%' . $search . '%');
+        }
+
 
         if ($blood_group) {
             $query->where('blood_group', $blood_group);

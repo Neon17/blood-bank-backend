@@ -11,13 +11,40 @@ use Illuminate\Support\Facades\Log;
 class UserController extends Controller
 {
 
-    public function index()
-    {
+    public function getResults($request, $query) {
+        info($request->all());
 
+        $search = $request->input('search', null);
+        $willing = $request->input('will_donate', null);
+        $status = $request->input('verification_status', null);
+        $history = $request->input('history', null);
+        $last_donated = $request->input('last_donated', null);
+
+        if ($search){
+            $query = $query->whereAny(
+                [ 'name', 'email', 'phone_number' ], 'LIKE', '%' . $search . '%'
+            );
+        }
+        if ($willing) {
+            $query = $query->where('will_donate', $willing);
+        }
+        if ($status) {
+            $query = $query->where('verification_status', $status);
+        }
+        return $query;        
+    }
+
+    public function index(Request $request)
+    {
         // How to make User as Admin, creating entry in admin table and linking it to user
         
         $this->authorize('viewAny', Auth::user());
-        $user = User::with('profilePhoto')->paginate(30);
+
+        $user = User::query();
+
+        $user = $this->getResults($request, $user);
+        info($user->toSql());
+        $user = $user->with('profilePhoto')->paginate(30);
 
         return response()->json([
             'status' => 'success',
