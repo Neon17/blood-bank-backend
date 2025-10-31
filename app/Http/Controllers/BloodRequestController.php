@@ -51,9 +51,9 @@ class BloodRequestController extends Controller
             if ($radiusInKm)
                 $bloodRequest = BloodRequest::with('user', 'bloodBank')->nearby($latitude, $longitude, $radiusInKm)->with('verificationPhoto');
             else
-                $bloodRequest = BloodRequest::with('user', 'bloodBank')->with('verificationPhoto');
+                $bloodRequest = BloodRequest::with('user', 'bloodBank')->nearby()->with('verificationPhoto');
         } else
-            $bloodRequest = BloodRequest::with('user', 'bloodBank');
+            $bloodRequest = BloodRequest::with('user', 'bloodBank')->nearby();
 
         $bloodRequest = $this->getResults($request, $bloodRequest)->paginate(30);
 

@@ -10,7 +10,7 @@ trait NearbyScope
      * Scope to find nearby records within a given radius (in kilometers).
      */
 
-    public function scopeNearby(Builder $query, $latitude, $longitude, $radiusInKm = 10): Builder
+    public function scopeNearby(Builder $query, $latitude=27.7172, $longitude=85.3240, $radiusInKm = 10): Builder
     {
         if (!$latitude || !$longitude) {
             return $query;

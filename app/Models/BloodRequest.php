@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Traits\NearbyScope;
 use App\Traits\Uploadable;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,6 +15,7 @@ class BloodRequest extends Model
     use NearbyScope, HasFactory, Uploadable;
 
     protected $table = 'blood_requests';
+    protected $appends = ['distance_in_km'];
 
     protected $fillable = [
         'blood_type',
@@ -53,6 +55,14 @@ class BloodRequest extends Model
     public function setLongitudeAttribute($value)
     {
         $this->attributes['longitude'] = round($value, 8);
+    }
+
+    protected function distanceInKm(): Attribute
+    {
+        return Attribute::make(
+            get: fn () =>
+                round(haversineGreatCircleDistance($this->latitude, $this->longitude), 2)
+        );
     }
 
     public function user()

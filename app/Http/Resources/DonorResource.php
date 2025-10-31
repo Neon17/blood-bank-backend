@@ -47,9 +47,12 @@ class DonorResource extends JsonResource
 
             'latitude' => $this->latitude,
             'longitude' => $this->longitude,
-            'distance_in_km' => $distance_in_km,
+            'distance_in_km' => $distance_in_km ?? $this->distance_in_km,
             'country' => $this->country,
             'city' => $this->city,
+
+            'user' => UserResource::make($this->whenLoaded('user')),
+            'profile_photo' => $this->whenLoaded('user.profilePhoto'),
 
             'verification_status' => $this->verification_status,
             'admin_message' => $this->admin_message,

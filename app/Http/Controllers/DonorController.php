@@ -25,7 +25,7 @@ class DonorController extends Controller
             $query = Donor::with(['user', 'user.profilePhoto'])
                 ->nearby($latitude, $longitude, $radius);
         } else {
-            $query = Donor::with(['user', 'user.profilePhoto']);
+            $query = Donor::with(['user', 'user.profilePhoto'])->nearby();
         }
 
         if ($search) {
@@ -43,7 +43,7 @@ class DonorController extends Controller
             'status' => 'success',
             'data' => [
                 'current_page' => $donors->currentPage(),
-                'data' => DonorResource::collection($donors->items()),
+                'data' => DonorResource::collection($donors),
                 'first_page_url' => $donors->url(1),
                 'from' => $donors->firstItem(),
                 'last_page' => $donors->lastPage(),

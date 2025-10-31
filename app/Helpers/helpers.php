@@ -15,8 +15,8 @@ if (!function_exists('haversineGreatCircleDistance')) {
     function haversineGreatCircleDistance(
         float $latitudeFrom,
         float $longitudeFrom,
-        float $latitudeTo,
-        float $longitudeTo,
+        float $latitudeTo = 27.7172,
+        float $longitudeTo = 85.3240,
         float $earthRadius = 6371.0
     ): float {
         // convert from degrees to radians
