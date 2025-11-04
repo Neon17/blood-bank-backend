@@ -25,7 +25,7 @@ return new class extends Migration
             $table->string('country');
             $table->decimal('latitude', 10, 8)->nullable();
             $table->decimal('longitude', 11, 8)->nullable();
-            $table->string(['pending', 'approved', 'cancelled'])->default('pending');
+            $table->enum('verification_status', ['pending', 'approved', 'cancelled'])->default('pending');
 
 
             $table->unsignedBigInteger('blood_request_id')->nullable();

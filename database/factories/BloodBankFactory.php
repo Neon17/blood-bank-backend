@@ -23,7 +23,7 @@ class BloodBankFactory extends Factory
                 'AB+' => fake()->numberBetween(0, 50),
                 'AB-' => fake()->numberBetween(0, 30),
             ]),
-            'phone_number' => '01-' . fake()->randomNumber(7, true),
+            'phone_number' => '98' . fake()->randomNumber(8, true),
         ];
     }
 }

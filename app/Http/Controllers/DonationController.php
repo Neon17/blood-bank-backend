@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Donation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DonationController extends Controller
 {
@@ -48,6 +49,10 @@ class DonationController extends Controller
             'verification_photo' => 'sometimes|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
         ]);
         $donation = Donation::create($validated);
+        if ((Auth::user()->role === 'blood_bank') || (Auth::user()->role === 'admin')) {
+            $donation->verification_status = 'approved';
+            $donation->update();
+        }
 
         if ($request->hasFile('verification_photo')) {
             $donation->storeUpload($request->file('verification_photo'), 'public');
@@ -76,6 +81,12 @@ class DonationController extends Controller
             'verification_photo' => 'sometimes|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
         ]);
         $donation->update($validated);
+        if ((Auth::user()->role === 'blood_bank') || (Auth::user()->role === 'admin')) {
+            if (isset($request->verification_status)){
+                $donation->verification_status = $request->verification_status;
+                $donation->update();
+            }
+        }
 
         if ($request->hasFile('verification_photo')) {
             $donation->storeUpload($request->file('verification_photo'), 'public');

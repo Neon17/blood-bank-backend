@@ -59,11 +59,11 @@ php artisan view:cache
 
 # Optional: Run seeders only if tables are empty (uncomment if needed)
 # if [ "$APP_ENV" = "production" ]; then
-#   echo "Checking if we need to seed data..."
-#   if php artisan tinker --execute="echo User::count();" 2>/dev/null | grep -q "0"; then
-#     echo "Database is empty, running seeders..."
-#     php artisan db:seed --force
-#   fi
+  echo "Checking if we need to seed data..."
+  if php artisan tinker --execute="echo User::count();" 2>/dev/null | grep -q "0"; then
+    echo "Database is empty, running seeders..."
+    php artisan db:seed --force
+  fi
 # fi
 
 echo "✅ Database setup complete!"

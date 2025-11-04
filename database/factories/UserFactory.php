@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Helpers\NepaliDataHelper;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 
@@ -45,7 +46,7 @@ class UserFactory extends Factory
         }
 
         return [
-            'name' => fake()->name(),
+            'name' => NepaliDataHelper::generateNepaliName(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'address' => fake()->streetAddress() . ($cityName ? ", $cityName" : "") . ', Nepal',

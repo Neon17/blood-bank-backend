@@ -51,7 +51,7 @@ class Donor extends Model
     {
         static::addGlobalScope(('active'), function (Builder $builder) {
             $builder->whereNotNull('last_donated_date');
-            $builder->where('last_donated_date', '>=', now()->subDays(90)->toDateString());
+            $builder->where('last_donated_date', '<=', now()->subDays(90)->toDateString());
             $builder->where('eligible_to_donate', true);
         });
     }
