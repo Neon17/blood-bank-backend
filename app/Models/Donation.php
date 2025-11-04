@@ -3,11 +3,12 @@
 namespace App\Models;
 
 use App\Traits\Uploadable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Donation extends Model
 {
-    use Uploadable;
+    use Uploadable, HasFactory;
     protected $table = 'donations';
 
     protected $fillable = [
