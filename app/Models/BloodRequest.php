@@ -45,6 +45,7 @@ class BloodRequest extends Model
     protected static function booted(){
         static::addGlobalScope('active', function(Builder $builder){
             $builder->where('active_status', true);
+            $builder->where('verification_status', 'approved');
         });
     }
 

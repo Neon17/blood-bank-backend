@@ -42,6 +42,8 @@ class BloodRequestController extends Controller
         // I have to sort in the order of nearest requests based on logged in user
         // If that users' location is null, then all requests are shown
         // If request has no query parameter (radiusInKm), then all requests are shown
+
+        $bloodRequest = BloodRequest::query();
         if (Auth::check()) {
             $latitude = Auth::user()->latitude;
             $longitude = Auth::user()->longitude;
@@ -49,11 +51,11 @@ class BloodRequestController extends Controller
             $radiusInKm = request('radiusInKm') ?? null;
 
             if ($radiusInKm)
-                $bloodRequest = BloodRequest::with('user', 'bloodBank')->nearby($latitude, $longitude, $radiusInKm)->with('verificationPhoto');
+                $bloodRequest = $bloodRequest->with('user', 'bloodBank')->nearby($latitude, $longitude, $radiusInKm)->with('verificationPhoto');
             else
-                $bloodRequest = BloodRequest::with('user', 'bloodBank')->nearby()->with('verificationPhoto');
+                $bloodRequest = $bloodRequest->with('user', 'bloodBank')->nearby()->with('verificationPhoto');
         } else
-            $bloodRequest = BloodRequest::with('user', 'bloodBank')->nearby();
+            $bloodRequest = $bloodRequest->with('user', 'bloodBank')->nearby();
 
         $bloodRequest = $this->getResults($request, $bloodRequest)->paginate(30);
 
