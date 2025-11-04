@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\BloodRequestController;
+use App\Http\Controllers\DonationController;
 use App\Http\Controllers\DonationProgramController;
 use App\Http\Controllers\DonorController;
 use App\Http\Controllers\UserController;
@@ -72,6 +73,14 @@ Route::prefix('/donation-programs')->middleware('optionalSanctum')->group(functi
     Route::post('/', [DonationProgramController::class, 'store'])->middleware('auth:sanctum', );
     Route::put('/{id}', [DonationProgramController::class, 'update'])->middleware('auth:sanctum', );
     Route::delete('/{id}', [DonationProgramController::class, 'destroy'])->middleware('auth:sanctum', );
+});
+
+Route::prefix('/donations')->middleware('optionalSanctum')->group(function () {
+    Route::get('/', [DonationController::class, 'index']);
+    Route::get('/{id}', [DonationController::class, 'show']);
+    Route::post('/', [DonationController::class, 'store'])->middleware('auth:sanctum', );
+    Route::put('/{id}', [DonationController::class, 'update'])->middleware('auth:sanctum', );
+    Route::delete('/{id}', [DonationController::class, 'destroy'])->middleware('auth:sanctum', );
 });
 
 // Group for authenticated users

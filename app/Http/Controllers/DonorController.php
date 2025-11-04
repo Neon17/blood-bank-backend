@@ -21,20 +21,26 @@ class DonorController extends Controller
         $longitude = $request->query('longitude');
         $search = $request->query('search', null);
 
+        $query = Donor::with(['user', 'user.profilePhoto']); 
+
+        if (Auth::user()->role === 'ADMIN') {
+            $query = $query->withoutGlobalScopes();
+        }
+
         if ($radius >0 && $latitude && $longitude) {
-            $query = Donor::with(['user', 'user.profilePhoto'])
+            $query = $query->with(['user', 'user.profilePhoto'])
                 ->nearby($latitude, $longitude, $radius);
         } else {
-            $query = Donor::with(['user', 'user.profilePhoto'])->nearby();
+            $query = $query->with(['user', 'user.profilePhoto'])->nearby();
         }
 
         if ($search) {
-            $query->whereAny(['contact_number', 'address'], 'LIKE', '%' . $search . '%');
+            $query = $query->whereAny(['contact_number', 'address'], 'LIKE', '%' . $search . '%');
         }
 
 
         if ($blood_group) {
-            $query->where('blood_group', $blood_group);
+            $query = $query->where('blood_group', $blood_group);
         }
 
         $donors = $query->paginate(30);
@@ -98,6 +104,13 @@ class DonorController extends Controller
         if ($request->hasFile('verification_photo')) {
             $donorApplication->storeUpload($request->file('verification_photo'), 'public');
         }
+        if (Auth::user()->role === 'admin') {
+            $donorApplication->status = 'APPROVED';
+            $donorApplication->save();
+        }
+        if ((Auth::user()->role === 'admin') || (Auth::user()->role === 'blood_bank')) {
+            $donorApplication->eligible_to_donate = true;
+        }
 
         $donorApplication->refresh();
 
@@ -122,7 +135,7 @@ class DonorController extends Controller
                 'Content-Type' => 'text/json'
             ]);
         }
-        if (($donorApplication->user->id == Auth::id()) || (Auth::user()->role === 'ADMIN')) {
+        if (($donorApplication->user->id == Auth::id()) || (Auth::user()->role === 'admin')) {
             return response()->json([
                 'status' => 'success',
                 'data' => $donorApplication
@@ -153,7 +166,7 @@ class DonorController extends Controller
         $id = Auth::id();
 
         // Authorization check
-        if (!($donor->user_id !== Auth::id() || Auth::user()->role !== 'ADMIN')) {
+        if (!($donor->user_id !== Auth::id() || Auth::user()->role !== 'admin')) {
             return response()->json([
                 'status' => 'fail',
                 'message' => 'Unauthorized to edit this Donor Application'
@@ -166,6 +179,14 @@ class DonorController extends Controller
         }
 
         $donorApplication->update($request->validated());
+        if (Auth::user()->role !== 'admin') {
+            $donor->eligible_to_donate = false;
+        }
+        if ((Auth::user()->role === 'admin') || (Auth::user()->role === 'blood_bank')) {
+            if (isset($request->eligible_to_donate)) {
+                $donor->eligible_to_donate = $request->eligible_to_donate;
+            }
+        }
         return response()->json([
             'status' => 'success',
             'data' => $donorApplication
@@ -186,6 +207,9 @@ class DonorController extends Controller
             $donor->storeUpload($request->file('profile_photo'), 'public');
         }
 
+        if (Auth::user()->role !== 'admin') {
+            $donor->eligible_to_donate = false;
+        }
         $donor->update();
 
         return response()->json([
@@ -239,7 +263,7 @@ class DonorController extends Controller
             ]);
         }
 
-        if (($donorApplication->user && $donorApplication->user->id == Auth::id()) || (Auth::user()->role === 'ADMIN')) {
+        if (($donorApplication->user && $donorApplication->user->id == Auth::id()) || (Auth::user()->role === 'admin')) {
             // ok authorized
         } else {
             return response()->json([
@@ -250,7 +274,7 @@ class DonorController extends Controller
             ]);
         }
 
-        if (($donorApplication->status === 'approved') && (Auth::user()->role !== 'ADMIN')) {
+        if (($donorApplication->status === 'approved') && (Auth::user()->role !== 'admin')) {
             return response()->json([
                 'status' => 'fail',
                 'message' => "Unauthorized to delete this Donor Application. Only Admin can delete verified donor application"

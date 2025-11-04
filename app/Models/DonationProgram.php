@@ -26,6 +26,10 @@ class DonationProgram extends Model
         return $this->belongsTo(BloodBank::class);
     }
 
+    public function donations() {
+        return $this->hasMany(Donation::class);
+    }
+
     public function visibility(): MorphOne
     {
         return $this->morphOne(Visibility::class, 'visible');

@@ -64,6 +64,9 @@ class DonorFactory extends Factory
             'verification_status' => fake()->randomElement(self::VERIFICATION_STATUSES), // Removed optional() to always have a status
             'admin_message' => fake()->boolean(20) ? fake()->sentence() : null, // 20% chance to have admin message
             'city' => $cityName,
+            'state' => null,
+            'country' => 'Nepal',
+            'eligible_to_donate' => fake()->boolean(80)
         ];
     }
 

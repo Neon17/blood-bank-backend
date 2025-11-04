@@ -7,6 +7,7 @@ namespace App\Models;
 use App\Traits\NearbyScope;
 use App\Traits\Uploadable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -96,6 +97,11 @@ class User extends Authenticatable
     public function userable(): MorphTo
     {
         return $this->morphTo('userable');
+    }
+
+    public function donations(): HasMany 
+    {
+        return $this->hasMany(Donation::class);
     }
 
     /**

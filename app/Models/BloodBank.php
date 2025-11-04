@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class BloodBank extends Model
@@ -23,6 +24,10 @@ class BloodBank extends Model
 
     public function donationPrograms() {
         return $this->hasMany(DonationProgram::class);
+    }
+
+    public function donations(): HasMany {
+        return $this->hasMany(Donation::class);
     }
 
     public function user(): MorphOne {
