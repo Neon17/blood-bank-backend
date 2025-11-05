@@ -19,6 +19,8 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasApiTokens, HasFactory, Notifiable, NearbyScope, Uploadable;
 
+    protected $appends = ['role'];
+
     /**
      * The attributes that are mass assignable.
      *
