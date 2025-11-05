@@ -18,7 +18,7 @@ php artisan tinker --execute="DB::connection()->getPdo()" || {
 
 # 3. Run migrations
 echo "Running migrations..."
-php artisan migrate:fresh --force
+php artisan migrate --force
 
 # 4. START SERVER FIRST (critical for Render port detection)
 echo "🚀 Starting server on port $PORT..."
