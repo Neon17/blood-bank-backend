@@ -59,28 +59,28 @@ class UserSeeder extends Seeder
         ]);
 
         // Create more regular users (without userable association)
-        // User::factory(94)->create()->each(function ($user) {
-        //     // 30% chance to have a donor profile
-        //     if (fake()->boolean(30)) {
-        //         $status = fake()->randomElement(['pending', 'approved', 'rejected']);
+        User::factory(94)->create()->each(function ($user) {
+            // 30% chance to have a donor profile
+            if (fake()->boolean(30)) {
+                $status = fake()->randomElement(['pending', 'approved', 'rejected']);
                 
-        //         $donor = Donor::factory()->create([
-        //             'user_id' => $user->id,
-        //             'verification_status' => $status,
-        //         ]);
+                $donor = Donor::factory()->create([
+                    'user_id' => $user->id,
+                    'verification_status' => $status,
+                ]);
                 
-        //         // Update user's verified_as_donor status if approved
-        //         if ($status === 'approved') {
-        //             $user->update(['verified_as_donor' => true]);
-        //         }
-        //     }
+                // Update user's verified_as_donor status if approved
+                if ($status === 'approved') {
+                    $user->update(['verified_as_donor' => true]);
+                }
+            }
 
-        //     // 20% chance to have blood requests
-        //     if (fake()->boolean(20)) {
-        //         BloodRequest::factory(fake()->numberBetween(1, 3))->create([
-        //             'user_id' => $user->id,
-        //         ]);
-        //     }
-        // });
+            // 20% chance to have blood requests
+            if (fake()->boolean(20)) {
+                BloodRequest::factory(fake()->numberBetween(1, 3))->create([
+                    'user_id' => $user->id,
+                ]);
+            }
+        });
     }
 }
