@@ -24,7 +24,7 @@ class StoreDonorRequest extends FormRequest
     {
         return [
             'contact_number' => 'required|numeric|digits_between:7,15',
-            'blood_group' => 'required|string|in:A+,A-,O+,O-,B+,B-,AB+,AB-',
+            'blood_type' => 'required|string|in:A+,A-,O+,O-,B+,B-,AB+,AB-',
             'address' => 'required|string|max:250',
             'date_of_birth' => [
                 'required',

@@ -24,7 +24,7 @@ class UpdateDonorRequest extends FormRequest
     {
         return [
             'contact_number' => 'sometimes|numeric|digits_between:7,15',
-            'blood_group' => 'sometimes|string|in:A+,A-,O+,O-,B+,B-,AB+,AB-',
+            'blood_type' => 'sometimes|string|in:A+,A-,O+,O-,B+,B-,AB+,AB-',
             'address' => 'sometimes|string|max:250',
             'date_of_birth' => [
                 'sometimes',

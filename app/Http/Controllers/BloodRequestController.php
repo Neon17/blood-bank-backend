@@ -21,7 +21,10 @@ class BloodRequestController extends Controller
         $blood_type = $request->input('blood_type', null);
 
         if ($search) {
-            $query = $query->whereAny(['exact_location', 'contact_number', 'city'], 'LIKE', '%' . $search . '%');
+            $query = $query->whereAny(['exact_location', 'contact_number', 'city'], 'LIKE', '%' . $search . '%')
+                ->orWhereHas('user', function ($query) use ($search) {
+                    $query->where('name', 'LIKE', '%' . $search . '%');
+                });
         }
 
         if ($willing) {
@@ -76,6 +79,8 @@ class BloodRequestController extends Controller
 
     public function allRequests(Request $request)
     {
+        info("all requests called");
+        info($request->all());
         $bloodRequests = BloodRequest::withoutGlobalScope('active')->with('user', 'bloodBank', 'verificationPhoto');
         $bloodRequests = $this->getResults($request, $bloodRequests)->orderBy('updated_at', 'desc')->paginate(30);
         return response()->json([

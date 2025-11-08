@@ -23,7 +23,7 @@ class DonorController extends Controller
 
         $query = Donor::with(['user', 'user.profilePhoto']); 
 
-        if (Auth::user()->role === 'ADMIN') {
+        if (Auth::user()->role === 'admin') {
             $query = $query->withoutGlobalScopes();
         }
 
@@ -35,7 +35,11 @@ class DonorController extends Controller
         }
 
         if ($search) {
-            $query = $query->whereAny(['contact_number', 'address'], 'LIKE', '%' . $search . '%');
+            $query = $query
+                ->whereAny(['contact_number', 'address'], 'LIKE', '%' . $search . '%')
+                ->orWhereHas('user', function ($query) use ($search) {
+                    $query->where('name', 'LIKE', '%' . $search . '%');
+                });
         }
 
 
