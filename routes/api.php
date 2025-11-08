@@ -51,8 +51,7 @@ Route::post('/blood/requests/{id}/finish', [BloodRequestController::class, 'fini
 Route::get('/users', [UserController::class, 'index'])->middleware(['auth:sanctum']);
 
 // logged in user photo update for profile and donor profile
-Route::patch('/profile/photo/update', [UserController::class, 'updatePhoto'])->middleware('auth:sanctum');
-Route::patch('/donor/photo/update', [UserController::class, 'updatePhoto'])->middleware('auth:sanctum');
+Route::post('/profile/photo/update', [UserController::class, 'updatePhoto'])->middleware('auth:sanctum');
 
 
 Route::middleware('optionalSanctum')->group(function () {
