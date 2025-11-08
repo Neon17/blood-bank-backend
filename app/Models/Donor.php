@@ -47,6 +47,10 @@ class Donor extends Model
         'admin_message'
     ];
 
+    // while storing Donor it should automatic update current_city, location of user
+    // also add user profile photo, its not working
+    // filter by recent updated at then (created at)
+
     protected static function booted(): void
     {
         static::addGlobalScope(('active'), function (Builder $builder) {

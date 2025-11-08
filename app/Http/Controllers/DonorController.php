@@ -43,6 +43,7 @@ class DonorController extends Controller
             $query = $query->where('blood_group', $blood_group);
         }
 
+        $query = $query->orderBy('updated_at', 'desc');
         $donors = $query->paginate(30);
 
         return response()->json([

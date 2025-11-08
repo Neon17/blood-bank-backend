@@ -57,7 +57,7 @@ class BloodRequestController extends Controller
         } else
             $bloodRequest = $bloodRequest->with('user', 'bloodBank')->nearby();
 
-        $bloodRequest = $this->getResults($request, $bloodRequest)->paginate(30);
+        $bloodRequest = $this->getResults($request, $bloodRequest)->orderBy('updated_at', 'desc')->paginate(30);
 
         return response()->json([
             'status' => 'success',
@@ -77,7 +77,7 @@ class BloodRequestController extends Controller
     public function allRequests(Request $request)
     {
         $bloodRequests = BloodRequest::withoutGlobalScope('active')->with('user', 'bloodBank', 'verificationPhoto');
-        $bloodRequests = $this->getResults($request, $bloodRequests)->paginate(30);
+        $bloodRequests = $this->getResults($request, $bloodRequests)->orderBy('updated_at', 'desc')->paginate(30);
         return response()->json([
             'status' => 'success',
             'data' => $bloodRequests

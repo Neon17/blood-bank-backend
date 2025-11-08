@@ -44,6 +44,8 @@ class UserController extends Controller
 
         $user = $this->getResults($request, $user);
         info($user->toSql());
+
+        $user = $user->orderBy('updated_at', 'desc');
         $user = $user->with('profilePhoto')->paginate(30);
 
         return response()->json([
