@@ -17,6 +17,16 @@ class DonationController extends Controller
         $donations = Donation::query();
         $donations = $this->getResults($request, $donations);
         $donations = $donations->with(['user', 'user.profilePhoto', 'uploadable'])->paginate(30);
+        info($donations);
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $donations
+        ]);
+    }
+
+    public function me(Request $request) {
+        $donations = Donation::where('user_id', Auth::id())->get();
 
         return response()->json([
             'status' => 'success',

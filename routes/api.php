@@ -42,6 +42,8 @@ Route::get('/blood/requests/yours', [BloodRequestController::class, 'yours'])->m
 Route::get('/blood/requests/{id}', [BloodRequestController::class, 'show']);
 Route::get('/blood/requests/{id}/edit', [BloodRequestController::class, 'edit'])->middleware('auth:sanctum');
 
+// create a list of blood banks with their location and phone number for admin (blood bank management)
+
 
 Route::patch('/blood/requests/{id}', [BloodRequestController::class, 'update'])->middleware('auth:sanctum');
 Route::delete('/blood/requests/{id}', [BloodRequestController::class, 'destroy'])->middleware('auth:sanctum');
@@ -76,6 +78,7 @@ Route::prefix('/donation-programs')->middleware('optionalSanctum')->group(functi
 
 Route::prefix('/donations')->middleware('optionalSanctum')->group(function () {
     Route::get('/', [DonationController::class, 'index']);
+    Route::get('/me', [DonationController::class, 'me']);
     Route::get('/{id}', [DonationController::class, 'show']);
     Route::post('/', [DonationController::class, 'store'])->middleware('auth:sanctum', );
     Route::put('/{id}', [DonationController::class, 'update'])->middleware('auth:sanctum', );
