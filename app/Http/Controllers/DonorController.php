@@ -100,6 +100,7 @@ class DonorController extends Controller
         }
 
         $data["user_id"] = $request->user()->id;
+        $data["blood_group"] = $data["blood_type"];
 
         $donorApplication = Donor::create($data);
         if ($request->hasFile('verification_photo')) {
