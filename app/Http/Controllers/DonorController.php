@@ -179,8 +179,9 @@ class DonorController extends Controller
         if ($request->hasFile('verification_photo')) {
             $donorApplication->storeUpload($request->file('verification_photo'), 'public');
         }
-
-        $donorApplication->update($request->validated());
+        $validated = $request->validated();
+        $validated['blood_group'] = $validated['blood_type'];
+        $donorApplication->update($validated);
         if (Auth::user()->role !== 'admin') {
             $donor->eligible_to_donate = false;
         }
