@@ -76,7 +76,7 @@ class DonorController extends Controller
 
     public function me()
     {
-        $donorApplication = Donor::where('user_id', Auth::id())->get();
+        $donorApplication = Donor::withoutGlobalScopes()->where('user_id', Auth::id())->get();
         return response()->json([
             'status' => 'success',
             'total' => count($donorApplication),
