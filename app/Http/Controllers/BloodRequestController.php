@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\BloodRequest;
 use Faker\Core\Blood;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class BloodRequestController extends Controller
 {
@@ -242,19 +244,58 @@ class BloodRequestController extends Controller
         ]);
     }
 
-    public function destroy($id)
+    public function destroy($id): JsonResponse
     {
-        $bloodRequest = BloodRequest::withoutGlobalScopes()->find($id);
-        if (!$bloodRequest) {
+        try {
+            $bloodRequest = BloodRequest::withoutGlobalScopes()->find($id);
+            info($id);
+
+            if (!$bloodRequest) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Blood Request not found'
+                ], 404);
+            }
+
+            // Store ID for response before deletion
+            $bloodRequestId = $bloodRequest->id;
+            $bloodType = $bloodRequest->blood_type;
+
+            // Check if model uses soft deletes
+            $usesSoftDeletes = method_exists($bloodRequest, 'trashed');
+
+            // Prevent deletion if there are related donations
+            if ($bloodRequest->donations()->exists()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Cannot delete blood request with existing donations. Please archive instead.'
+                ], 422);
+            }
+
+            // Perform deletion
+            $bloodRequest->delete();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => $usesSoftDeletes ?
+                    'Blood request archived successfully' :
+                    'Blood request permanently deleted successfully',
+                'data' => [
+                    'id' => $bloodRequestId,
+                    'blood_type' => $bloodType,
+                    'deleted_at' => $usesSoftDeletes ? now()->toISOString() : null
+                ]
+            ], 200);
+        } catch (\Exception $e) {
+            Log::error('Blood request deletion failed: ' . $e->getMessage(), [
+                'blood_request_id' => $id,
+                'user_id' => Auth::id()
+            ]);
+
             return response()->json([
                 'status' => 'error',
-                'message' => 'Blood Request not found'
-            ], 404);
+                'message' => 'Failed to delete blood request'
+            ], 500);
         }
-        $bloodRequest->delete();
-        return response()->json([
-            'status' => 'success',
-            'data' => $bloodRequest
-        ]);
     }
 }
