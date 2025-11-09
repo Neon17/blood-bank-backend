@@ -68,9 +68,10 @@ class BloodRequestController extends Controller
         ]);
     }
 
-    public function yourRequests()
+    public function yourRequests(Request $request)
     {
-        $bloodRequests = BloodRequest::where('user_id', Auth::user()->id)->with('user', 'bloodBank', 'verificationPhoto')->get();
+        $bloodRequests = BloodRequest::withoutGlobalScopes()->where('user_id', Auth::user()->id);
+        $bloodRequests = $this->getResults($request, $bloodRequests)->orderBy('updated_at', 'desc')->paginate(30);
         return response()->json([
             'status' => 'success',
             'data' => $bloodRequests
@@ -134,7 +135,7 @@ class BloodRequestController extends Controller
     {
         // if blood request is fulfilled, it goes to this route
         $bloodRequest = BloodRequest::find($id);
-        $bloodRequest->active_status = false;
+        // $bloodRequest->active_status = false;
         $bloodRequest->update();
         return response()->json([
             'status' => 'success',
@@ -145,8 +146,8 @@ class BloodRequestController extends Controller
     public function adminApproveRequest($id)
     {
         // Admin approves the request as legal and verified not scam
-        $request = BloodRequest::find($id);
-        $request->active_status = true;
+        $request = BloodRequest::withoutGlobalScopes()->find($id);
+        // $request->active_status = true;
         $request->verification_status = 'approved';
         $request->update();
         return response()->json([
@@ -159,7 +160,7 @@ class BloodRequestController extends Controller
     {
         // Admin can reject the request if found suspicious and not legal
         $request = BloodRequest::find($id);
-        $request->active_status = false;
+        // $request->active_status = false;
         $request->verification_status = 'rejected';
         $request->update();
         return response()->json([
@@ -172,7 +173,7 @@ class BloodRequestController extends Controller
     {
         // User can cancel the request saying it wasn't necessary
         $request = BloodRequest::find($id);
-        $request->active_status = false;
+        // $request->active_status = false;
         $request->status = 'cancelled';
         $request->update();
         return response()->json([
@@ -185,7 +186,7 @@ class BloodRequestController extends Controller
     {
         // User can complete the request saying it was necessary
         $request = BloodRequest::find($id);
-        $request->active_status = false;
+        // $request->active_status = false;
         $request->status = 'completed';
         $request->update();
         return response()->json([
@@ -207,7 +208,7 @@ class BloodRequestController extends Controller
 
     public function update(Request $request, $id)
     {
-        $bloodRequest = BloodRequest::find($id);
+        $bloodRequest = BloodRequest::withoutGlobalScopes()->find($id);
         $validated = $request->validate([
             'blood_type' => 'required',
             'quantity' => 'required',
@@ -216,7 +217,8 @@ class BloodRequestController extends Controller
             'contact_number' => 'required',
             'city' => 'required',
             'country' => 'required',
-            'verification_photo' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
+            'verification_photo' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'verification_status' => 'sometimes|string|in:pending,approved,rejected'
         ]);
 
         $bloodRequest->update($validated);
@@ -242,7 +244,7 @@ class BloodRequestController extends Controller
 
     public function destroy($id)
     {
-        $bloodRequest = BloodRequest::find($id);
+        $bloodRequest = BloodRequest::withoutGlobalScopes()->find($id);
         if (!$bloodRequest) {
             return response()->json([
                 'status' => 'error',
