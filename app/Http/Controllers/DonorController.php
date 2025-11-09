@@ -21,13 +21,13 @@ class DonorController extends Controller
         $longitude = $request->query('longitude');
         $search = $request->query('search', null);
 
-        $query = Donor::with(['user', 'user.profilePhoto']); 
+        $query = Donor::with(['user', 'user.profilePhoto']);
 
         if (Auth::user()->role === 'admin') {
             $query = $query->withoutGlobalScopes();
         }
 
-        if ($radius >0 && $latitude && $longitude) {
+        if ($radius > 0 && $latitude && $longitude) {
             $query = $query->with(['user', 'user.profilePhoto'])
                 ->nearby($latitude, $longitude, $radius);
         } else {
@@ -158,47 +158,66 @@ class DonorController extends Controller
         }
     }
 
-    public function update(UpdateDonorRequest $request, Donor $donor)
+    public function update(UpdateDonorRequest $request, $id)
     {
-        $donorApplication = $donor;
-        if (!$donorApplication) {
-            return response()->json([
-                'status' => 'fail',
-                'message' => 'Donor Application Not Found'
-            ], 404, [
-                'Content-Type' => 'text/json'
-            ]);
-        }
-        $id = Auth::id();
+        $donor = Donor::withoutGlobalScopes()->find($id);
 
-        // Authorization check
-        if (!($donor->user_id !== Auth::id() || Auth::user()->role !== 'admin')) {
+        if (!$donor) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Donor not found'
+            ], 404);
+        }
+
+        if ($donor->user_id !== Auth::id() && Auth::user()->role !== 'admin' && Auth::user()->role !== 'blood_bank') {
             return response()->json([
                 'status' => 'fail',
-                'message' => 'Unauthorized to edit this Donor Application'
+                'message' => 'Unauthorized to edit this donor application'
             ], 403);
         }
 
-        $donorApplication = Donor::find($donor->id);
-        if ($request->hasFile('verification_photo')) {
-            $donorApplication->storeUpload($request->file('verification_photo'), 'public');
-        }
         $validated = $request->validated();
-        $validated['blood_group'] = $validated['blood_type'];
-        $donorApplication->update($validated);
-        if (Auth::user()->role !== 'admin') {
-            $donor->eligible_to_donate = false;
+
+        if ($request->hasFile('verification_photo')) {
+            $donor->storeUpload($request->file('verification_photo'), 'public');
         }
-        if ((Auth::user()->role === 'admin') || (Auth::user()->role === 'blood_bank')) {
-            if (isset($request->eligible_to_donate)) {
-                $donor->eligible_to_donate = $request->eligible_to_donate;
+
+        // info($validated);
+
+        if (isset($validated['blood_type'])) {
+            $donor->blood_group = $validated['blood_type'];
+            unset($validated['blood_type']);
+        }
+        // info($donor->blood_group);
+
+        foreach ($validated as $field => $value) {
+            if ($field !== 'blood_type') {
+                info("updating..");
+                $donor->$field = $value;
             }
         }
+
+        // Handle eligible_to_donate based on user role
+        if (Auth::user()->role === 'admin' || Auth::user()->role === 'blood_bank') {
+            if ($request->has('eligible_to_donate')) {
+                $donor->eligible_to_donate = $request->eligible_to_donate;
+            }
+        } else {
+            // Regular users can't set eligibility and reset it when updating
+            $donor->eligible_to_donate = false;
+        }
+
+        // info($donor);
+        // Save the changes
+        $donor->update();
+        $donor->refresh();
+        info($donor);
+
         return response()->json([
             'status' => 'success',
-            'data' => $donorApplication
+            'data' => $donor->fresh()
         ], 200, [
-            'Content-Type' => 'text/json'
+            'Content-Type' => 'application/json'
         ]);
     }
 
@@ -227,13 +246,22 @@ class DonorController extends Controller
         ]);
     }
 
-    public function changeStatus(Request $request, Donor $donor)
+    public function changeStatus(Request $request, $id)
     {
-        // includes status change from pending to approved or wrong
+        // includes status change from pending to approved or rejected
         // also includes admin message
+        $donor = Donor::withoutGlobalScopes()->where('id', $id)->first();
+
+        // Check if donor exists
+        if (!$donor) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => 'Donor not found'
+            ], 404);
+        }
 
         $validator = Validator::make($request->all(), [
-            'status' => 'required|string|in:pending,approved,wrong',
+            'status' => 'required|string|in:pending,approved,rejected',
             'message' => 'nullable|string|max:250'
         ]);
 
@@ -245,19 +273,24 @@ class DonorController extends Controller
             ], 422);
         }
 
+        info($validator->validated());
+
         $data = $validator->validated();
 
-        $updatedDonor = Donor::where('id', $donor->id)->update([
-            'verification_status' => $data['status'],
-            'admin_message' => $data['message'] ?? null
-        ]);
+        $updatedDonor = Donor::withoutGlobalScopes()->find($donor->id);
+        $updatedDonor->verification_status = $data['status'];
+        if (array_key_exists('message', $data)) {
+            $updatedDonor->admin_message = $data['message'];
+        }
+        $updatedDonor = $updatedDonor->update();
+
+        // info("verification_status", $updatedDonor);
 
         return response()->json([
             'status' => 'success',
             'data' => $updatedDonor
         ]);
     }
-
     public function destroy(Donor $donor)
     {
         $donorApplication = $donor;

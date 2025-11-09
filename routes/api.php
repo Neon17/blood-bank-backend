@@ -37,7 +37,7 @@ Route::post('/blood/requests', [BloodRequestController::class, 'store'])->middle
 Route::get('/blood/requests/all', [BloodRequestController::class, 'allRequests'])
     ->middleware(['auth:sanctum', ]);
 
-Route::get('/blood/requests/yours', [BloodRequestController::class, 'yours'])->middleware('auth:sanctum');
+Route::get('/blood/requests/yours', [BloodRequestController::class, 'yourRequests'])->middleware('auth:sanctum');
 
 Route::get('/blood/requests/{id}', [BloodRequestController::class, 'show']);
 Route::get('/blood/requests/{id}/edit', [BloodRequestController::class, 'edit'])->middleware('auth:sanctum');
@@ -96,7 +96,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/blood/donors/{donor}/edit', [DonorController::class, 'edit']);
 
     // Only admin can change verification status
-    Route::patch('/blood/donors/{donor}/status', [DonorController::class, 'changeStatus'])
+    Route::patch('/blood/donors/{id}/status', [DonorController::class, 'changeStatus'])
         ->middleware();
 
     Route::patch('/blood/requests/{request}/approve', [BloodRequestController::class, 'adminApproveRequest'])

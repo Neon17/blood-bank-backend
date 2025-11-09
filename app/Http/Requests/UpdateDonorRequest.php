@@ -24,7 +24,7 @@ class UpdateDonorRequest extends FormRequest
     {
         return [
             'contact_number' => 'sometimes|numeric|digits_between:7,15',
-            'blood_type' => 'sometimes|string|in:A+,A-,O+,O-,B+,B-,AB+,AB-',
+            'blood_group' => 'sometimes|string|in:A+,A-,O+,O-,B+,B-,AB+,AB-',
             'address' => 'sometimes|string|max:250',
             'date_of_birth' => [
                 'sometimes',
@@ -43,6 +43,7 @@ class UpdateDonorRequest extends FormRequest
             'current_health_status' => 'sometimes|string',
             'verification_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
 
+            'verification_status' => 'sometimes|string|in:pending,approved,rejected',
             'latitude' => 'sometimes|numeric|between:-90,90',
             'longitude' => 'sometimes|numeric|between:-180,180',
         ];
