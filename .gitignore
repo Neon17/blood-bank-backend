@@ -6,7 +6,7 @@
 /storage/*.key
 /storage/pail
 /vendor
-*.db
+# removed blanket .db ignore so sqlite DB files can be tracked
 .env
 .env.backup
 .env.production

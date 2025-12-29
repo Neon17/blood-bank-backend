@@ -24,6 +24,7 @@ class BloodBankFactory extends Factory
                 'AB-' => fake()->numberBetween(0, 30),
             ]),
             'phone_number' => '98' . fake()->randomNumber(8, true),
+            'type' => fake()->randomElement(['hospital', 'independent', 'red_cross']),
         ];
     }
 }
