@@ -2,8 +2,8 @@ FROM php:8.2-fpm
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
-    git curl zip unzip libpng-dev libonig-dev libxml2-dev libzip-dev libpq-dev gettext-base \
-    && docker-php-ext-install pdo pdo_pgsql mbstring bcmath gd zip \
+    git curl zip unzip libpng-dev libonig-dev libxml2-dev libzip-dev libpq-dev libsqlite3-dev gettext-base \
+    && docker-php-ext-install pdo pdo_pgsql pdo_sqlite mbstring bcmath gd zip \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
