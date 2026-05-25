@@ -20,7 +20,7 @@ trait NearbyScope
         $longitude = (float) $longitude;
         $radiusInKm = (float) $radiusInKm;
 
-        $isPostgreSQL = config('database.default') === 'pgsql';
+        $driver = config('database.default');
 
         $distanceFormula = "(6371 * acos(
         cos(radians(?)) *
@@ -35,13 +35,13 @@ trait NearbyScope
             ->whereNotNull('longitude')
             ->selectRaw("*, {$distanceFormula} AS distance", [$latitude, $longitude, $latitude]);
 
-        if ($isPostgreSQL) {
-            // PostgreSQL: use WHERE for filtering
+        if ($driver === 'pgsql' || $driver === 'sqlite') {
+            // PostgreSQL and SQLite: use WHERE for filtering (HAVING on non-aggregate fails in SQLite)
             return $query
                 ->whereRaw("{$distanceFormula} <= ?", [$latitude, $longitude, $latitude, $radiusInKm])
                 ->orderByRaw("{$distanceFormula} ASC", [$latitude, $longitude, $latitude]);
         } else {
-            // MySQL: use HAVING as before
+            // MySQL: use HAVING
             return $query
                 ->having("distance", "<=", $radiusInKm)
                 ->orderBy("distance");

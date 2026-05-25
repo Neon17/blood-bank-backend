@@ -23,7 +23,7 @@ class DonorController extends Controller
 
         $query = Donor::with(['user', 'user.profilePhoto']);
 
-        if (Auth::user()->role === 'admin') {
+        if (Auth::check() && Auth::user()->role === 'admin') {
             $query = $query->withoutGlobalScopes();
         }
 
